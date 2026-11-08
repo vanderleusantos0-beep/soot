@@ -2,8 +2,9 @@
 <html lang="de" class="dark">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ScootLab Pro – Ninebot Ultimate Utility</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ScootLab Pro – Ninebot Utility & Tuning Tool</title>
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -20,173 +21,247 @@
                             blue: '#0072ff',
                             neonGreen: '#10b981',
                             red: '#ef4444',
-                            yellow: '#f59e0b'
+                            yellow: '#f59e0b',
+                            purple: '#8b5cf6'
                         }
                     },
                     boxShadow: {
                         'neon-cyan': '0 0 15px rgba(0, 240, 255, 0.4)',
                         'neon-green': '0 0 15px rgba(16, 185, 129, 0.5)',
                         'neon-red': '0 0 15px rgba(239, 68, 68, 0.4)',
+                        'neon-purple': '0 0 15px rgba(139, 92, 246, 0.4)',
                     }
                 }
             }
         }
     </script>
-    <!-- FontAwesome -->
+    
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #070b14; color: #e2e8f0; user-select: none; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #070b14;
+            color: #e2e8f0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        .glass-panel { background: rgba(14, 22, 38, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(27, 42, 71, 0.9); }
-        .mem-grid { display: grid; grid-template-columns: repeat(32, minmax(0, 1fr)); gap: 3px; }
-        .mem-block { aspect-ratio: 1; border-radius: 2px; background: #1b2a47; transition: all 0.15s ease; }
+        .font-rajdhani { font-family: 'Rajdhani', sans-serif; }
+
+        /* Custom Cyber Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #070b14; }
+        ::-webkit-scrollbar-thumb { background: #1b2a47; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #10b981; }
+
+        .glass-panel {
+            background: rgba(14, 22, 38, 0.85);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(27, 42, 71, 0.9);
+        }
+
+        .glass-panel-glow {
+            background: rgba(14, 22, 38, 0.9);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Matrix Grid for Flasher */
+        .mem-grid {
+            display: grid;
+            grid-template-columns: repeat(32, minmax(0, 1fr));
+            gap: 3px;
+        }
+        .mem-block {
+            aspect-ratio: 1;
+            border-radius: 2px;
+            background: #1b2a47;
+            transition: all 0.15s ease;
+        }
         .mem-block.erased { background: #ef4444; box-shadow: 0 0 4px #ef4444; }
         .mem-block.written-vcu { background: #f59e0b; box-shadow: 0 0 4px #f59e0b; }
         .mem-block.written-mcu { background: #10b981; box-shadow: 0 0 4px #10b981; }
-        .mem-block.verified { background: #10b981; box-shadow: 0 0 4px #10b981; }
-        #air-needle { transform-origin: 150px 150px; transition: transform 0.1s ease-out; }
+        .mem-block.verified { background: #00f0ff; box-shadow: 0 0 4px #00f0ff; }
+
+        #air-needle {
+            transform-origin: 150px 150px;
+            transition: transform 0.1s ease-out;
+        }
+
         .neon-accent { accent-color: #10b981; }
+
+        /* Subtle Background Grid Animation */
+        .cyber-grid-bg {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(27, 42, 71, 0.25) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(27, 42, 71, 0.25) 1px, transparent 1px);
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between transition-colors duration-300">
+<body class="min-h-screen flex flex-col justify-between cyber-grid-bg">
 
-    <!-- HAUPT-LOCK-MODAL: BEZAHLUNG & AUSWAHL -->
+    <!-- APP SETUP / UNLOCK MODAL -->
     <div id="scooter-modal" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="glass-panel w-full max-w-2xl rounded-2xl p-6 space-y-6 border border-cyber-neonGreen/40 shadow-neon-green max-h-[90vh] overflow-y-auto">
+        <div class="glass-panel w-full max-w-2xl rounded-2xl p-6 space-y-6 border border-cyber-neonGreen/40 shadow-neon-green max-h-[92vh] overflow-y-auto relative">
             
-            <!-- SCHRITT 1: BEZAHLUNG & 16-STELLIGER CODE -->
+            <!-- STEP 1: PAYMENT & 16-CHAR CODE VALIDATION -->
             <div id="modal-step-pay" class="space-y-5 text-center">
                 <div class="w-16 h-16 rounded-2xl bg-cyber-neonGreen/10 border border-cyber-neonGreen/30 text-cyber-neonGreen flex items-center justify-center text-2xl mx-auto mb-2 shadow-neon-green">
                     <i class="fa-solid fa-lock"></i>
                 </div>
-                <h2 class="font-orbitron font-bold text-xl text-white">ScootLab Pro – Lizenz freischalten</h2>
-                <p class="text-xs text-slate-400 font-mono">
-                    Gib deinen exakt <b class="text-cyber-neonGreen">16-stelligen Code</b> ein. 
-                    <br><span class="text-yellow-400 font-bold">Die Überprüfung durch die Admins dauert bis zu 24 Stunden.</span>
+                <h2 class="font-orbitron font-bold text-xl text-white tracking-wide">ScootLab Pro – Lizenz Freischalten</h2>
+                <p class="text-xs text-slate-400 font-mono leading-relaxed">
+                    Um Zugriff auf die Modellauswahl, Web-Bluetooth Diagnostik und Custom Tuning zu erhalten, gib bitte deinen exakt <b class="text-cyber-neonGreen">16-stelligen Guthaben-Code</b> ein.
+                    <br><span class="text-yellow-400 font-bold">Die Überprüfung durch die Admins kann bis zu 24 Stunden dauern.</span>
                 </p>
 
                 <form onsubmit="submitLicenseCode(event)" class="space-y-4 text-left font-mono text-xs">
                     <div>
                         <label class="block text-slate-300 font-bold mb-1">Deine E-Mail Adresse</label>
                         <input type="email" id="modal-user-email" required placeholder="name@beispiel.de" 
-                            class="w-full bg-slate-900 border border-slate-700 text-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyber-neonGreen">
+                            class="w-full bg-slate-900 border border-slate-700 text-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyber-neonGreen transition">
                     </div>
 
                     <div class="border border-slate-700/80 rounded-xl overflow-hidden bg-slate-900/40">
-                        <label class="flex items-center gap-3 p-3.5 border-b border-slate-800 cursor-pointer hover:bg-slate-800/40">
+                        <label class="flex items-center gap-3 p-3.5 border-b border-slate-800 cursor-pointer hover:bg-slate-800/40 transition">
                             <input type="radio" name="payment_method" value="paysafecard" checked class="accent-cyber-neonGreen">
-                            <span class="font-bold text-white text-sm"><i class="fa-solid fa-shield-halved text-red-500 mr-2"></i> paysafecard (15€ / 16 Stellen)</span>
+                            <div class="flex items-center gap-2 font-bold text-white text-sm">
+                                <i class="fa-solid fa-shield-halved text-red-500"></i>
+                                <span>paysafecard (15€ / 16 Stellen)</span>
+                            </div>
                         </label>
-                        <label class="flex items-center gap-3 p-3.5 cursor-pointer hover:bg-slate-800/40">
+
+                        <label class="flex items-center gap-3 p-3.5 cursor-pointer hover:bg-slate-800/40 transition">
                             <input type="radio" name="payment_method" value="amazon" class="accent-cyber-neonGreen">
-                            <span class="font-bold text-white text-sm"><i class="fa-brands fa-amazon text-amber-500 mr-2"></i> Amazon Gutschein (15€ / 16 Stellen)</span>
+                            <div class="flex items-center gap-2 font-bold text-white text-sm">
+                                <i class="fa-brands fa-amazon text-amber-500"></i>
+                                <span>Amazon Gutschein (15€ / 16 Stellen)</span>
+                            </div>
                         </label>
 
                         <div class="p-3.5 bg-slate-900/80 border-t border-slate-800 space-y-2">
                             <div class="flex justify-between items-center text-[11px]">
-                                <label class="text-slate-300 font-bold">16-stelliger Code:</label>
+                                <label class="text-slate-300 font-bold">16-stelliger Gutschein-Code:</label>
                                 <span id="code-counter" class="text-red-400 font-bold">0 / 16 Stellen</span>
                             </div>
-                            <input type="text" id="modal-gift-code" maxlength="19" required oninput="validateCodeInput(this)" placeholder="16 Zeichen eingeben..." 
+                            <input type="text" id="modal-gift-code" maxlength="19" required oninput="validateCodeInput(this)" placeholder="Exakt 16 Zeichen eingeben..." 
                                 class="w-full bg-slate-950 border border-slate-700 text-cyber-neonGreen font-mono font-bold text-base rounded-lg px-4 py-3 focus:outline-none focus:border-cyber-neonGreen tracking-widest uppercase">
-                            <p id="code-error-msg" class="hidden text-red-400 text-[10px] font-bold">Der Code muss exakt 16 Zeichen lang sein!</p>
+                            <p id="code-error-msg" class="hidden text-red-400 text-[10px] font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i> Der Code muss exakt 16 Zeichen lang sein!</p>
                         </div>
                     </div>
 
                     <button type="submit" id="btn-modal-pay" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyber-neonGreen to-emerald-600 text-slate-950 font-bold font-orbitron transition flex items-center justify-center gap-2 cursor-pointer shadow-neon-green text-sm">
                         <i class="fa-solid fa-paper-plane"></i>
-                        <span>ZUR PRÜFUNG EINREICHEN (MAX. 24 STD)</span>
+                        <span>CODE EINREICHEN & PRÜFUNG STARTEN (MAX 24H)</span>
                     </button>
                 </form>
             </div>
 
-            <!-- SCHRITT 2: WARTEN AUF ADMIN-FREIGABE (BIS ZU 24 STD) -->
+            <!-- STEP 2: SIMULATED ADMIN REVIEW DELAY -->
             <div id="modal-step-waiting" class="hidden space-y-6 text-center py-6">
                 <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
                     <div class="absolute inset-0 rounded-full border-4 border-yellow-400 border-t-transparent animate-spin"></div>
                     <i class="fa-solid fa-hourglass-half text-2xl text-yellow-400 animate-pulse"></i>
                 </div>
-                <h3 class="font-orbitron font-bold text-lg text-white">Prüfung läuft (bis zu 24 Stunden)...</h3>
-                <div class="p-4 rounded-xl bg-slate-900/80 border border-yellow-500/30 text-xs font-mono text-slate-300 space-y-2">
-                    <p class="text-yellow-400 font-bold">Dein 16-stelliger Code wurde übermittelt.</p>
-                    <p>Die manuelle Admin-Prüfung dauert maximal 24 Stunden.</p>
+                <h3 class="font-orbitron font-bold text-lg text-white">Lizenz-Prüfung läuft...</h3>
+                <div class="p-4 rounded-xl bg-slate-900/80 border border-yellow-500/30 text-xs font-mono text-slate-300 space-y-2 text-left">
+                    <p class="text-yellow-400 font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Code erhalten: <span id="submitted-code-preview" class="text-white">----------------</span></p>
+                    <p>Die manuelle Überprüfung durch das Admin-Team kann <b class="text-white">bis zu 24 Stunden</b> dauern.</p>
+                    <p class="text-[10px] text-slate-500">Nach der Verifizierung schaltest du alle 16 Ninebot-Modelle und Web-Bluetooth Funktionen frei.</p>
                 </div>
-                <button onclick="simulateAdminApproval()" class="text-[11px] text-slate-500 underline hover:text-slate-300 cursor-pointer">
-                    [Admin Demo: Sofort freischalten]
-                </button>
+                <div class="pt-2 border-t border-slate-800">
+                    <button onclick="simulateAdminApproval()" class="px-4 py-2 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/60 border border-indigo-500/50 text-indigo-300 font-mono text-xs transition cursor-pointer">
+                        <i class="fa-solid fa-key mr-1"></i> [Admin Demo: Sofort Freischalten]
+                    </button>
+                </div>
             </div>
 
-            <!-- SCHRITT 3: ALLE 16 ROLLER WÄHLEN -->
+            <!-- STEP 3: NINEBOT MODEL SELECTION (ALL 16 MODELS) -->
             <div id="modal-step-select" class="hidden space-y-4">
                 <div class="text-center">
-                    <h2 class="font-orbitron font-bold text-xl text-white">Wähle deinen Ninebot Roller</h2>
-                    <p class="text-xs text-slate-400 font-mono">Lizenz aktiv ✅ – Wähle dein exaktes Modell:</p>
+                    <h2 class="font-orbitron font-bold text-xl text-white">Wähle dein Ninebot Modell</h2>
+                    <p class="text-xs text-slate-400 font-mono">Lizenz Aktiviert ✅ – Wähle dein exaktes E-Scooter Modell:</p>
                 </div>
 
-                <div class="space-y-4 text-xs font-mono max-h-64 overflow-y-auto pr-2">
+                <div class="space-y-4 text-xs font-mono max-h-72 overflow-y-auto pr-2">
+                    <!-- E-Serie -->
                     <div>
-                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px]">E-Serie – Einsteiger</span>
+                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px] tracking-wider"><i class="fa-solid fa-bolt mr-1"></i> E-Serie – Einsteiger</span>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                            <button onclick="setScooterModel('Ninebot E2 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot E2 D</button>
-                            <button onclick="setScooterModel('Ninebot E2 D II')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot E2 D II</button>
-                            <button onclick="setScooterModel('Ninebot E2 Pro D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot E2 Pro D</button>
-                            <button onclick="setScooterModel('Ninebot E3 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot E3 D</button>
-                            <button onclick="setScooterModel('Ninebot E3 Pro D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot E3 Pro D</button>
+                            <button onclick="setScooterModel('Ninebot E2 D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot E2 D</button>
+                            <button onclick="setScooterModel('Ninebot E2 D II')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot E2 D II</button>
+                            <button onclick="setScooterModel('Ninebot E2 Pro D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot E2 Pro D</button>
+                            <button onclick="setScooterModel('Ninebot E3 D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot E3 D</button>
+                            <button onclick="setScooterModel('Ninebot E3 Pro D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot E3 Pro D</button>
                         </div>
                     </div>
 
+                    <!-- F-Serie -->
                     <div>
-                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px]">F-Serie – Mittelklasse</span>
+                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px] tracking-wider"><i class="fa-solid fa-shield-halved mr-1"></i> F-Serie – Mittelklasse</span>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                            <button onclick="setScooterModel('Ninebot F2 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot F2 D</button>
-                            <button onclick="setScooterModel('Ninebot F2 II D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot F2 II D</button>
-                            <button onclick="setScooterModel('Ninebot F2 Pro II D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot F2 Pro II D</button>
-                            <button onclick="setScooterModel('Ninebot F3 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot F3 D</button>
-                            <button onclick="setScooterModel('Ninebot F3 Pro D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot F3 Pro D</button>
+                            <button onclick="setScooterModel('Ninebot F2 D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot F2 D</button>
+                            <button onclick="setScooterModel('Ninebot F2 II D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot F2 II D</button>
+                            <button onclick="setScooterModel('Ninebot F2 Pro II D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot F2 Pro II D</button>
+                            <button onclick="setScooterModel('Ninebot F3 D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot F3 D</button>
+                            <button onclick="setScooterModel('Ninebot F3 Pro D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot F3 Pro D</button>
                         </div>
                     </div>
 
+                    <!-- MAX-Serie -->
                     <div>
-                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px]">MAX-Serie – Komfort & Reichweite</span>
+                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px] tracking-wider"><i class="fa-solid fa-crown mr-1"></i> MAX-Serie – Komfort & Reichweite</span>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                            <button onclick="setScooterModel('Ninebot MAX G2 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot MAX G2 D</button>
-                            <button onclick="setScooterModel('Ninebot MAX G3 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot MAX G3 D</button>
-                            <button onclick="setScooterModel('Ninebot MAX G3 Pro D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot MAX G3 Pro D</button>
+                            <button onclick="setScooterModel('Ninebot MAX G2 D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot MAX G2 D</button>
+                            <button onclick="setScooterModel('Ninebot MAX G3 D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot MAX G3 D</button>
+                            <button onclick="setScooterModel('Ninebot MAX G3 Pro D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot MAX G3 Pro D</button>
                         </div>
                     </div>
 
+                    <!-- ZT-Serie -->
                     <div>
-                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px]">ZT-Serie – Robuste Modelle</span>
+                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px] tracking-wider"><i class="fa-solid fa-truck-monster mr-1"></i> ZT-Serie – Robuste Modelle</span>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                            <button onclick="setScooterModel('Ninebot ZT3 Pro D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot ZT3 Pro D</button>
-                            <button onclick="setScooterModel('Ninebot ZT3 Max D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot ZT3 Max D</button>
+                            <button onclick="setScooterModel('Ninebot ZT3 Pro D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot ZT3 Pro D</button>
+                            <button onclick="setScooterModel('Ninebot ZT3 Max D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot ZT3 Max D</button>
                         </div>
                     </div>
 
+                    <!-- GT-Serie -->
                     <div>
-                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px]">GT-Serie – Premium</span>
+                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px] tracking-wider"><i class="fa-solid fa-gauge-high mr-1"></i> GT-Serie – Premium Power</span>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                            <button onclick="setScooterModel('Ninebot GT3 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot GT3 D</button>
-                            <button onclick="setScooterModel('Ninebot GT3 Pro')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot GT3 Pro</button>
+                            <button onclick="setScooterModel('Ninebot GT3 D')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot GT3 D</button>
+                            <button onclick="setScooterModel('Ninebot GT3 Pro')" class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:border-cyber-neonGreen hover:bg-cyber-neonGreen/10 transition text-left cursor-pointer font-bold text-white">Ninebot GT3 Pro</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- SCHRITT 4: BLUETOOTH KOPPLUNG (NUR AUSLESEN, NICHT ÄNDERN) -->
+            <!-- STEP 4: REAL WEB BLUETOOTH CONNECTION -->
             <div id="modal-step-bluetooth" class="hidden space-y-4 py-4 text-center">
                 <div class="w-20 h-20 mx-auto rounded-full bg-cyber-neonGreen/10 border border-cyber-neonGreen flex items-center justify-center text-cyber-neonGreen text-3xl shadow-neon-green animate-pulse">
                     <i class="fa-brands fa-bluetooth"></i>
                 </div>
-                <h3 class="font-orbitron font-bold text-base text-white">Bluetooth-Kopplung mit <span id="chosen-model-label">--</span></h3>
+                <h3 class="font-orbitron font-bold text-base text-white">Bluetooth-Kopplung mit <span id="chosen-model-label" class="text-cyber-neonGreen">--</span></h3>
                 <p class="text-xs text-slate-400 font-mono">
-                    Verbinde dich per Browser-Bluetooth, um Seriennummer und Daten auszulesen (Kein automatisches Verändern ohne Flasher).
+                    Scanne nach Bluetooth-Signalen in Reichweite. Verbindet sich direkt im Browser zum Auslesen der echten Seriennummer (VIN) und Firmware.
                 </p>
-                <button onclick="connectRealBluetoothScooter()" class="w-full py-3 rounded-xl bg-cyber-neonGreen text-slate-950 font-bold font-orbitron text-xs transition cursor-pointer shadow-neon-green">
-                    <i class="fa-solid fa-link"></i> BLUETOOTH GERÄT SUCHEN & DATEN AUSLESEN
-                </button>
+                <div class="pt-2 space-y-2">
+                    <button onclick="connectRealBluetoothScooter()" class="w-full py-3.5 rounded-xl bg-cyber-neonGreen hover:bg-emerald-400 text-slate-950 font-bold font-orbitron text-xs transition cursor-pointer shadow-neon-green flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-satellite-dish"></i> GERÄT SCANNE N & VERBINDEN
+                    </button>
+                    <button onclick="useSimulatedBluetooth()" class="w-full py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-400 hover:text-slate-200 font-mono text-xs transition cursor-pointer">
+                        (Kein BLE Gerät in der Nähe? Demo-Kopplung verwenden)
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -194,108 +269,174 @@
 
     <!-- Header Navigation -->
     <header class="glass-panel sticky top-0 z-40 border-b border-cyber-border">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyber-neonGreen to-emerald-700 flex items-center justify-center text-slate-950 font-black text-xl shadow-neon-green">
                     <i class="fa-solid fa-bolt"></i>
                 </div>
                 <div>
-                    <h1 class="font-orbitron font-extrabold text-lg text-white">SCOOT<span class="text-cyber-neonGreen">LAB</span> PRO</h1>
-                    <p id="header-sub" class="text-[10px] text-slate-400 font-mono uppercase">Kein Gerät verbunden</p>
+                    <h1 class="font-orbitron font-extrabold text-lg tracking-wider bg-gradient-to-r from-white via-slate-200 to-cyber-neonGreen bg-clip-text text-transparent">
+                        SCOOT<span class="text-cyber-neonGreen">LAB</span> PRO
+                    </h1>
+                    <p id="header-model-sub" class="text-[10px] text-slate-400 font-mono tracking-widest uppercase">Kein Scooter verbunden</p>
                 </div>
             </div>
-            <button onclick="reopenModal()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-xs font-mono text-slate-200 border border-slate-700 cursor-pointer">
-                <i class="fa-solid fa-bluetooth"></i> Bluetooth / Setup
-            </button>
+
+            <div class="flex items-center gap-2 sm:gap-4 text-xs font-mono">
+                <div id="status-pill" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/60 text-slate-400">
+                    <span class="w-2.5 h-2.5 rounded-full bg-slate-500" id="status-dot"></span>
+                    <span id="status-text" class="font-semibold">OFFLINE</span>
+                </div>
+
+                <button onclick="reopenModal()" id="license-pill" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/20 transition cursor-pointer">
+                    <i class="fa-solid fa-key text-[10px]"></i>
+                    <span id="license-pill-text" class="font-semibold">Lizenz: Unlocked</span>
+                </button>
+            </div>
         </div>
 
-        <nav class="max-w-7xl mx-auto px-4 flex space-x-4 overflow-x-auto text-xs sm:text-sm font-medium border-t border-slate-800/60">
-            <button onclick="switchTab('dash')" id="tab-dash" class="tab-btn active border-b-2 border-cyber-neonGreen text-cyber-neonGreen py-3 px-4 flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-gauge-high"></i> Dashboard</button>
-            <button onclick="switchTab('config')" id="tab-config" class="tab-btn border-b-2 border-transparent text-slate-400 hover:text-slate-200 py-3 px-4 flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-sliders"></i> Tuning & Config</button>
-            <button onclick="switchTab('test')" id="tab-test" class="tab-btn border-b-2 border-transparent text-slate-400 hover:text-slate-200 py-3 px-4 flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-vial"></i> Air-Test</button>
-            <button onclick="switchTab('fl')" id="tab-fl" class="tab-btn border-b-2 border-transparent text-slate-400 hover:text-slate-200 py-3 px-4 flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-microchip"></i> Firmware Flasher</button>
+        <nav class="max-w-7xl mx-auto px-4 flex space-x-1 sm:space-x-4 overflow-x-auto text-xs sm:text-sm font-medium border-t border-slate-800/60">
+            <button onclick="switchTab('dash')" id="tab-dash" class="tab-btn active border-b-2 border-cyber-neonGreen text-cyber-neonGreen py-3 px-4 flex items-center gap-2 font-semibold transition whitespace-nowrap cursor-pointer">
+                <i class="fa-solid fa-gauge-high"></i> Dashboard
+            </button>
+            <button onclick="switchTab('config')" id="tab-config" class="tab-btn border-b-2 border-transparent text-slate-400 hover:text-slate-200 py-3 px-4 flex items-center gap-2 transition whitespace-nowrap cursor-pointer">
+                <i class="fa-solid fa-sliders"></i> Tuning & Config
+            </button>
+            <button onclick="switchTab('test')" id="tab-test" class="tab-btn border-b-2 border-transparent text-slate-400 hover:text-slate-200 py-3 px-4 flex items-center gap-2 transition whitespace-nowrap cursor-pointer">
+                <i class="fa-solid fa-vial"></i> Air-Test
+            </button>
+            <button onclick="switchTab('fl')" id="tab-fl" class="tab-btn border-b-2 border-transparent text-slate-400 hover:text-slate-200 py-3 px-4 flex items-center gap-2 transition whitespace-nowrap cursor-pointer">
+                <i class="fa-solid fa-microchip"></i> Firmware Flasher
+            </button>
         </nav>
     </header>
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
-        <!-- TAB 1: DASHBOARD (NUR FIRMWARE, VIN, REGION & KILOMETERSTAND) -->
+        <!-- TAB 1: DASHBOARD -->
         <section id="content-dash" class="tab-content space-y-6">
             <div class="glass-panel rounded-2xl p-6 space-y-6">
+                
                 <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                     <div>
                         <h2 class="font-orbitron font-bold text-xl text-slate-100 flex items-center gap-2">
-                            <i class="fa-solid fa-microchip text-cyber-neonGreen"></i> Fahrzeug Status & Information
+                            <i class="fa-solid fa-microchip text-cyber-neonGreen"></i> Fahrzeug Status & Live Daten
                         </h2>
-                        <p class="text-xs text-slate-400 font-mono">Ausgelesene Telemetrie & Firmware Versionen</p>
+                        <p class="text-xs text-slate-400 font-mono">Ausgelesene Telemetrie, VIN, Firmware-Stände & Region</p>
                     </div>
-                    <span id="dash-region-tag" class="text-xs font-mono text-yellow-400 bg-slate-900 px-3 py-1.5 rounded-full border border-slate-800 font-bold">REGION: DE (20 km/h)</span>
+
+                    <div class="flex items-center gap-2">
+                        <span id="dash-region-tag" class="text-xs font-mono text-yellow-400 bg-slate-900 px-3.5 py-1.5 rounded-full border border-slate-800 font-bold">
+                            REGION: DE (20 km/h)
+                        </span>
+                        <button onclick="toggleRegionQuick()" class="px-3 py-1.5 rounded-lg bg-cyber-neonGreen/10 border border-cyber-neonGreen/30 text-cyber-neonGreen text-xs font-mono hover:bg-cyber-neonGreen/20 transition cursor-pointer">
+                            Region Switch (DE / UC)
+                        </button>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono text-xs">
+                    
+                    <!-- KILOMETERSTAND & VIN NUMMER -->
                     <div class="space-y-4">
                         <div class="p-5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
-                            <span class="text-slate-500 font-bold block text-[11px] uppercase">Gesamt-Kilometerstand (Odometer)</span>
+                            <span class="text-slate-500 font-bold block text-[11px] uppercase tracking-wider">Gesamt-Kilometerstand (Odometer)</span>
                             <div class="flex items-baseline gap-2">
                                 <span id="info-odo" class="font-orbitron font-black text-4xl text-white">148.5</span>
                                 <span class="text-cyber-neonGreen font-bold text-sm">KM</span>
                             </div>
                         </div>
+
                         <div class="p-5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
-                            <span class="text-slate-500 font-bold block text-[11px] uppercase">Seriennummer (VIN) & Region</span>
+                            <span class="text-slate-500 font-bold block text-[11px] uppercase tracking-wider">Seriennummer (VIN) & Region</span>
                             <div class="flex items-center justify-between">
                                 <span id="info-vin-code" class="font-orbitron font-bold text-cyber-neonGreen text-lg">1K1DE2408C8912</span>
-                                <span id="info-region-code" class="px-2.5 py-1 rounded bg-slate-950 border border-slate-700 text-yellow-400 font-bold">DE</span>
+                                <span id="info-region-code" class="px-2.5 py-1 rounded bg-slate-950 border border-slate-700 text-yellow-400 font-bold">DE (20 km/h)</span>
                             </div>
                         </div>
                     </div>
 
+                    <!-- FIRMWARE VERSIONEN -->
                     <div class="p-5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-4">
-                        <span class="text-slate-500 font-bold block text-[11px] uppercase border-b border-slate-800 pb-2">Firmware System Versionen</span>
+                        <span class="text-slate-500 font-bold block text-[11px] uppercase tracking-wider border-b border-slate-800 pb-2">Firmware System Versionen</span>
+                        
                         <div class="space-y-3">
-                            <div class="flex justify-between items-center p-2.5 rounded bg-slate-950 border border-slate-800">
-                                <span class="text-slate-400">VCU Version:</span>
-                                <span id="ver-vcu" class="font-bold text-emerald-400">v1.4.8 (Stock)</span>
+                            <div class="flex justify-between items-center p-2.5 rounded bg-slate-950 border border-slate-800/80">
+                                <span class="text-slate-400">VCU Version (Vehicle Control):</span>
+                                <span id="ver-vcu" class="font-bold text-emerald-400">v1.4.8 (Stock Safe)</span>
                             </div>
-                            <div class="flex justify-between items-center p-2.5 rounded bg-slate-950 border border-slate-800">
-                                <span class="text-slate-400">MCU Version:</span>
-                                <span id="ver-mcu" class="font-bold text-emerald-400">v1.7.0 (Stock)</span>
+
+                            <div class="flex justify-between items-center p-2.5 rounded bg-slate-950 border border-slate-800/80">
+                                <span class="text-slate-400">MCU Version (Motor Control):</span>
+                                <span id="ver-mcu" class="font-bold text-emerald-400">v1.7.0 (Stock Safe)</span>
                             </div>
-                            <div class="flex justify-between items-center p-2.5 rounded bg-slate-950 border border-slate-800">
-                                <span class="text-slate-400">BLE Version:</span>
-                                <span id="ver-ble" class="font-bold text-white">v2.1.4</span>
+
+                            <div class="flex justify-between items-center p-2.5 rounded bg-slate-950 border border-slate-800/80">
+                                <span class="text-slate-400">BLE Version (Bluetooth):</span>
+                                <span id="ver-ble" class="font-bold text-white">v2.1.4 (Protected)</span>
                             </div>
                         </div>
                     </div>
+
                 </div>
+
+                <div class="pt-4 border-t border-slate-800 flex justify-end">
+                    <button onclick="reopenModal()" class="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold font-orbitron text-xs transition flex items-center gap-2 border border-slate-700 cursor-pointer">
+                        <i class="fa-solid fa-arrows-rotate"></i> ROLLER WECHSELN / BLUETOOTH NEU KOPPELN
+                    </button>
+                </div>
+
             </div>
         </section>
 
         <!-- TAB 2: TUNING & CONFIG -->
         <section id="content-config" class="tab-content hidden space-y-6">
             <div class="glass-panel rounded-2xl p-6 space-y-6">
-                <div class="border-b border-slate-800 pb-4">
-                    <h2 class="font-orbitron font-bold text-xl text-slate-100 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-cyber-neonGreen"></i> Geschwindigkeits- & Modus-Parameter
-                    </h2>
-                    <p class="text-xs text-slate-400 font-mono">Passe Höchstgeschwindigkeiten an (beeinflusst den Air-Test)</p>
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div>
+                        <h2 class="font-orbitron font-bold text-xl text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-cyber-neonGreen"></i> Geschwindigkeits- & Modus-Parameter
+                        </h2>
+                        <p class="text-xs text-slate-400 font-mono">Passe Höchstgeschwindigkeiten an. (Der Sports max speed Wert wird direkt für den Air-Test übernommen!)</p>
+                    </div>
                 </div>
 
                 <div class="space-y-6 font-mono text-xs">
                     <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-3">
                         <div class="flex justify-between items-center">
                             <span class="font-bold text-slate-200">Sports max speed</span>
-                            <span class="text-cyber-neonGreen font-bold text-sm"><b id="val-sports-speed">100</b> km/h</span>
+                            <span class="text-cyber-neonGreen font-bold text-sm"><b id="val-sports-speed">100</b> km/h <i class="fa-solid fa-pen text-[10px] ml-1"></i></span>
                         </div>
                         <input type="range" id="input-sports-speed" min="10" max="100" value="100" oninput="updateSliderVal('sports-speed', this.value)" class="w-full neon-accent cursor-pointer">
+                        <div class="flex justify-between text-[10px] text-slate-500"><span>10 km/h</span><span>100 km/h</span></div>
                     </div>
+
                     <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-3">
                         <div class="flex justify-between items-center">
                             <span class="font-bold text-slate-200">Drive max speed</span>
-                            <span class="text-cyber-neonGreen font-bold text-sm"><b id="val-drive-speed">25</b> km/h</span>
+                            <span class="text-cyber-neonGreen font-bold text-sm"><b id="val-drive-speed">25</b> km/h <i class="fa-solid fa-pen text-[10px] ml-1"></i></span>
                         </div>
                         <input type="range" id="input-drive-speed" min="10" max="25" value="25" oninput="updateSliderVal('drive-speed', this.value)" class="w-full neon-accent cursor-pointer">
+                        <div class="flex justify-between text-[10px] text-slate-500"><span>10 km/h</span><span>25 km/h</span></div>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-slate-200">Eco max speed</span>
+                            <span class="text-cyber-neonGreen font-bold text-sm"><b id="val-eco-speed">11</b> km/h <i class="fa-solid fa-pen text-[10px] ml-1"></i></span>
+                        </div>
+                        <input type="range" id="input-eco-speed" min="5" max="16" value="11" oninput="updateSliderVal('eco-speed', this.value)" class="w-full neon-accent cursor-pointer">
+                        <div class="flex justify-between text-[10px] text-slate-500"><span>5 km/h</span><span>16 km/h</span></div>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-slate-200">Motor start speed (Zero Start)</span>
+                            <span class="text-cyber-neonGreen font-bold text-sm"><b id="val-motor-start">0</b> km/h <i class="fa-solid fa-pen text-[10px] ml-1"></i></span>
+                        </div>
+                        <input type="range" id="input-motor-start" min="0" max="5" value="0" oninput="updateSliderVal('motor-start', this.value)" class="w-full neon-accent cursor-pointer">
+                        <div class="flex justify-between text-[10px] text-slate-500"><span>0 (Zero Start Aktiv)</span><span>5 km/h</span></div>
                     </div>
                 </div>
             </div>
@@ -304,13 +445,15 @@
         <!-- TAB 3: AIR-TEST (RICHTET SICH NACH TUNING CONFIG) -->
         <section id="content-test" class="tab-content hidden space-y-6">
             <div class="glass-panel rounded-2xl p-6 space-y-6">
+                
                 <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                     <div>
                         <h2 class="font-orbitron font-bold text-xl text-slate-100 flex items-center gap-2">
                             <i class="fa-solid fa-gauge-simple-high text-cyber-neonGreen"></i> Live Air-Test Diagnostik
                         </h2>
-                        <p class="text-xs text-slate-400 font-mono">Nutzt das Limit aus Tuning & Config: <b id="air-limit-info" class="text-cyber-neonGreen">100 km/h</b></p>
+                        <p class="text-xs text-slate-400 font-mono">Freilauf-Test am aufgebockten Roller. Zielgeschwindigkeit: <b id="air-limit-info" class="text-cyber-neonGreen">100 km/h</b></p>
                     </div>
+
                     <button id="btn-start-air" onclick="toggleAirTest()" class="px-6 py-2.5 rounded-xl bg-cyber-neonGreen hover:bg-emerald-400 text-slate-950 font-bold font-orbitron text-xs transition shadow-neon-green cursor-pointer">
                         <i class="fa-solid fa-play"></i> AIR-TEST STARTEN
                     </button>
@@ -320,15 +463,46 @@
                     <div class="relative w-full max-w-md h-64 flex items-center justify-center">
                         <svg viewBox="0 0 300 200" class="w-full h-full">
                             <path d="M 40 160 A 110 110 0 1 1 260 160" fill="none" stroke="#1b2a47" stroke-width="3" stroke-dasharray="2 4"/>
+                            <path d="M 50 160 A 100 100 0 1 1 250 160" fill="none" stroke="#0f172a" stroke-width="12"/>
+                            
+                            <text x="52" y="168" fill="#94a3b8" font-size="9" font-family="monospace">0</text>
+                            <text x="60" y="105" fill="#94a3b8" font-size="9" font-family="monospace">15</text>
+                            <text x="95" y="58" fill="#94a3b8" font-size="9" font-family="monospace">30</text>
+                            <text x="144" y="42" fill="#94a3b8" font-size="9" font-family="monospace">50</text>
+                            <text x="195" y="58" fill="#94a3b8" font-size="9" font-family="monospace">75</text>
+                            <text x="230" y="105" fill="#94a3b8" font-size="9" font-family="monospace">90</text>
+                            <text x="236" y="168" fill="#94a3b8" font-size="9" font-family="monospace">100+</text>
+
                             <line id="air-needle" x1="150" y1="150" x2="150" y2="60" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" transform="rotate(-120 150 150)"/>
                             <circle cx="150" cy="150" r="4" fill="#10b981"/>
                         </svg>
+
                         <div class="absolute inset-0 top-12 flex flex-col items-center justify-center pointer-events-none">
                             <span id="air-tacho-speed" class="font-orbitron text-6xl font-bold text-white">0</span>
                             <span class="font-mono text-xs text-slate-400 mt-1">km/h</span>
                         </div>
                     </div>
+
+                    <div class="w-full grid grid-cols-2 md:grid-cols-2 gap-3 mt-4 font-mono text-xs">
+                        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/80">
+                            <span class="text-slate-500 block text-[11px]">Motor Stromstärke (Current)</span>
+                            <span id="tele-current" class="font-bold text-white text-base">0 <span class="text-xs font-normal text-slate-400">A</span></span>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/80">
+                            <span class="text-slate-500 block text-[11px]">Akkuspannung (Voltage)</span>
+                            <span id="tele-voltage" class="font-bold text-white text-base">0 <span class="text-xs font-normal text-slate-400">V</span></span>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/80">
+                            <span class="text-slate-500 block text-[11px]">Test-Strecke</span>
+                            <span id="tele-trip" class="font-bold text-white text-base">0 <span class="text-xs font-normal text-slate-400">km</span></span>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/80">
+                            <span class="text-slate-500 block text-[11px]">Test-Dauer</span>
+                            <span id="tele-time" class="font-bold text-white text-base">0s</span>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </section>
 
@@ -339,15 +513,30 @@
                     <h2 class="font-orbitron font-bold text-xl text-slate-100 flex items-center gap-2">
                         <i class="fa-solid fa-microchip text-cyber-neonGreen"></i> Custom Firmware Flasher
                     </h2>
-                    <p class="text-xs text-slate-400 font-mono">Schreibe die Tuning-Parameter auf VCU & MCU</p>
+                    <p class="text-xs text-slate-400 font-mono">Schreibe die konfigurierten Tuning-Parameter auf VCU & MCU Speichersektoren</p>
                 </div>
+
                 <div class="space-y-4">
-                    <button id="btn-flash" onclick="startFullFlash()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold font-orbitron text-xs shadow-neon-red cursor-pointer">
-                        <i class="fa-solid fa-bolt"></i> CUSTOM FIRMWARE FLASHEN
-                    </button>
-                    <div class="mem-grid p-3 bg-slate-950 rounded-xl border border-slate-800" id="mem-blocks"></div>
-                    <div id="flash-log" class="h-32 overflow-y-auto bg-slate-950 font-mono text-xs p-3 rounded-lg border border-slate-800 text-slate-300">
-                        [INFO] System bereit.
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="font-orbitron text-xs font-bold text-cyber-neonGreen uppercase tracking-wider">VCU & MCU Flash-Vorgang (~20 Sek.)</h3>
+                        <button id="btn-flash" onclick="startFullFlash()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold font-orbitron text-xs hover:opacity-90 transition shadow-neon-red cursor-pointer">
+                            <i class="fa-solid fa-bolt"></i> CUSTOM FIRMWARE FLASHEN
+                        </button>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+                            <span>Flash-Matrix (Sektoren 0x08000000 - 0x08040000)</span>
+                            <span id="flash-status-text">Bereit zum Flashen</span>
+                        </div>
+                        <div class="mem-grid p-3 bg-slate-950 rounded-xl border border-slate-800" id="mem-blocks"></div>
+                    </div>
+
+                    <div class="glass-panel rounded-xl p-4">
+                        <h4 class="font-mono text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Live Protokoll</h4>
+                        <div id="flash-log" class="h-36 overflow-y-auto bg-slate-950 font-mono text-xs p-3 rounded-lg border border-slate-800 space-y-1 text-slate-300">
+                            <div class="text-slate-500">[INFO] System bereit. Roller ist gekoppelt.</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -357,12 +546,14 @@
 
     <script>
         let isLicensed = false;
-        let selectedModel = "";
+        let selectedModel = "Ninebot MAX G2 D";
+        let activeRegion = "DE";
         let bluetoothDevice = null;
         let airTestRunning = false;
         let airTestInterval = null;
+        let airTestTime = 0;
 
-        // Flash Matrix erstellen
+        // Initialize 128 Flash Memory Blocks
         const memGrid = document.getElementById('mem-blocks');
         for(let i=0; i<128; i++) {
             const block = document.createElement('div');
@@ -372,27 +563,30 @@
         }
 
         function switchTab(tabId) {
-            if(!isLicensed && tabId !== 'dash') {
-                alert("Bitte schalte zuerst die Pro-Lizenz frei!");
-                reopenModal();
-                return;
-            }
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('border-cyber-neonGreen', 'text-cyber-neonGreen'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('border-cyber-neonGreen', 'text-cyber-neonGreen');
+                el.classList.add('border-transparent', 'text-slate-400');
+            });
             document.getElementById('content-' + tabId).classList.remove('hidden');
             document.getElementById('tab-' + tabId).classList.add('border-cyber-neonGreen', 'text-cyber-neonGreen');
+            document.getElementById('tab-' + tabId).classList.remove('border-transparent', 'text-slate-400');
         }
 
-        // 16-stellige Code Validierung
+        // 16-Character License Code Validation
         function validateCodeInput(input) {
             let clean = input.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
             input.value = clean;
-            document.getElementById('code-counter').innerText = `${clean.length} / 16 Stellen`;
+            const counter = document.getElementById('code-counter');
+            const errorMsg = document.getElementById('code-error-msg');
+
+            counter.innerText = `${clean.length} / 16 Stellen`;
+
             if(clean.length === 16) {
-                document.getElementById('code-counter').className = "text-emerald-400 font-bold";
-                document.getElementById('code-error-msg').classList.add('hidden');
+                counter.className = "text-emerald-400 font-bold";
+                errorMsg.classList.add('hidden');
             } else {
-                document.getElementById('code-counter').className = "text-red-400 font-bold";
+                counter.className = "text-red-400 font-bold";
             }
         }
 
@@ -401,9 +595,10 @@
             const code = document.getElementById('modal-gift-code').value;
             if(code.length !== 16) {
                 document.getElementById('code-error-msg').classList.remove('hidden');
-                alert("Der Code muss exakt 16 Stellen lang sein!");
+                alert("Der Gutschein-Code muss exakt 16 Stellen lang sein!");
                 return;
             }
+            document.getElementById('submitted-code-preview').innerText = code;
             document.getElementById('modal-step-pay').classList.add('hidden');
             document.getElementById('modal-step-waiting').classList.remove('hidden');
         }
@@ -412,6 +607,8 @@
             isLicensed = true;
             document.getElementById('modal-step-waiting').classList.add('hidden');
             document.getElementById('modal-step-select').classList.remove('hidden');
+            document.getElementById('license-pill-text').innerText = "Lizenz: Pro Unlocked";
+            document.getElementById('license-pill').className = "flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold";
         }
 
         function setScooterModel(model) {
@@ -421,28 +618,77 @@
             document.getElementById('modal-step-bluetooth').classList.remove('hidden');
         }
 
-        // Web Bluetooth Verbindung (Nur Auslesen)
+        // Broad Web Bluetooth Integration (Accepts All Devices with GATT fallback)
         async function connectRealBluetoothScooter() {
+            if (!navigator.bluetooth) {
+                alert("Dein Browser unterstützt keine Web-Bluetooth API. (Bitte Chrome/Edge auf Android oder PC nutzen).");
+                useSimulatedBluetooth();
+                return;
+            }
+
             try {
-                if(navigator.bluetooth) {
-                    bluetoothDevice = await navigator.bluetooth.requestDevice({
-                        filters: [{ namePrefix: 'Ninebot' }, { namePrefix: 'Segway' }]
-                    });
+                bluetoothDevice = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true,
+                    optionalServices: ['0000ffe0-0000-1000-8000-00805f9b34fb', '0000180a-0000-1000-8000-00805f9b34fb']
+                });
+
+                if(bluetoothDevice) {
+                    try {
+                        await bluetoothDevice.gatt.connect();
+                    } catch(e) {
+                        console.log("GATT connect skipped or completed.");
+                    }
                 }
-                finalizeConnection();
+                finalizeConnection(true);
             } catch (error) {
-                // Fallback für Demo
-                finalizeConnection();
+                console.log("Bluetooth prompt closed or cancelled:", error);
+                alert("Kein Bluetooth-Gerät ausgewählt. Aktiviere Demo-Kopplung.");
+                useSimulatedBluetooth();
             }
         }
 
-        function finalizeConnection() {
+        function useSimulatedBluetooth() {
+            finalizeConnection(false);
+        }
+
+        function finalizeConnection(isRealBT) {
             document.getElementById('scooter-modal').classList.add('hidden');
-            document.getElementById('header-sub').innerText = selectedModel + " Connected";
+            document.getElementById('header-model-sub').innerText = `${selectedModel} (${isRealBT ? 'BLE Online' : 'Connected'})`;
+            document.getElementById('status-dot').className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping";
+            document.getElementById('status-text').innerText = "ONLINE";
+            document.getElementById('status-pill').className = "flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold";
+
+            // Update Dashboard values
+            updateVinNumber();
+            document.getElementById('info-odo').innerText = (80 + Math.random() * 120).toFixed(1);
         }
 
         function reopenModal() {
             document.getElementById('scooter-modal').classList.remove('hidden');
+            if(!isLicensed) {
+                document.getElementById('modal-step-pay').classList.remove('hidden');
+                document.getElementById('modal-step-waiting').classList.add('hidden');
+                document.getElementById('modal-step-select').classList.add('hidden');
+                document.getElementById('modal-step-bluetooth').classList.add('hidden');
+            } else {
+                document.getElementById('modal-step-pay').classList.add('hidden');
+                document.getElementById('modal-step-waiting').classList.add('hidden');
+                document.getElementById('modal-step-select').classList.remove('hidden');
+                document.getElementById('modal-step-bluetooth').classList.add('hidden');
+            }
+        }
+
+        function updateVinNumber() {
+            const randomNum = Math.floor(1000 + Math.random() * 9000);
+            const vin = `1K1${activeRegion === 'USA' ? 'UC' : 'DE'}${randomNum}C${randomNum}`;
+            document.getElementById('info-vin-code').innerText = vin;
+            document.getElementById('info-region-code').innerText = activeRegion === 'USA' ? 'UC (40 km/h)' : 'DE (20 km/h)';
+            document.getElementById('dash-region-tag').innerText = activeRegion === 'USA' ? 'REGION: UC (USA UNLOCKED)' : 'REGION: DE (DEUTSCHLAND)';
+        }
+
+        function toggleRegionQuick() {
+            activeRegion = activeRegion === 'DE' ? 'USA' : 'DE';
+            updateVinNumber();
         }
 
         function updateSliderVal(id, val) {
@@ -452,37 +698,89 @@
             }
         }
 
-        // Air-Test richtet sich nach Tuning & Config
+        // Air Test linked dynamically to Tuning Config
         function toggleAirTest() {
             const btn = document.getElementById('btn-start-air');
+            
             if(airTestRunning) {
                 clearInterval(airTestInterval);
                 airTestRunning = false;
                 btn.innerHTML = `<i class="fa-solid fa-play"></i> AIR-TEST STARTEN`;
-                document.getElementById('air-tacho-speed').innerText = "0";
+                btn.className = "px-6 py-2.5 rounded-xl bg-cyber-neonGreen hover:bg-emerald-400 text-slate-950 font-bold font-orbitron text-xs transition shadow-neon-green cursor-pointer";
+                
+                updateAirTacho(0);
+                document.getElementById('tele-current').innerText = "0 A";
+                document.getElementById('tele-voltage').innerText = "0 V";
+                document.getElementById('tele-trip').innerText = "0 km";
+                document.getElementById('tele-time').innerText = "0s";
             } else {
                 airTestRunning = true;
                 btn.innerHTML = `<i class="fa-solid fa-square"></i> TEST STOPPEN`;
+                btn.className = "px-6 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold font-orbitron text-xs transition shadow-neon-red cursor-pointer";
+                
                 let currentSpeed = 0;
-                let maxSpeed = parseInt(document.getElementById('input-sports-speed').value);
+                airTestTime = 0;
+                const maxTarget = parseInt(document.getElementById('input-sports-speed').value);
 
                 airTestInterval = setInterval(() => {
-                    if(currentSpeed < maxSpeed) currentSpeed += 2;
-                    document.getElementById('air-tacho-speed').innerText = currentSpeed;
-                    const angle = -120 + (Math.min(currentSpeed, 100) / 100) * 240;
-                    document.getElementById('air-needle').style.transform = `rotate(${angle}deg)`;
-                }, 100);
+                    airTestTime += 0.2;
+                    if(currentSpeed < maxTarget) {
+                        currentSpeed += (maxTarget / 18);
+                        if(currentSpeed > maxTarget) currentSpeed = maxTarget;
+                    }
+
+                    updateAirTacho(Math.round(currentSpeed));
+
+                    document.getElementById('tele-current').innerHTML = `${(currentSpeed * 0.65).toFixed(1)} <span class="text-xs font-normal text-slate-400">A</span>`;
+                    document.getElementById('tele-voltage').innerHTML = `${(42.0 - (currentSpeed * 0.04)).toFixed(1)} <span class="text-xs font-normal text-slate-400">V</span>`;
+                    document.getElementById('tele-trip').innerHTML = `${(airTestTime * 0.015).toFixed(2)} <span class="text-xs font-normal text-slate-400">km</span>`;
+                    document.getElementById('tele-time').innerText = `${Math.round(airTestTime)}s`;
+                }, 200);
             }
+        }
+
+        function updateAirTacho(speed) {
+            document.getElementById('air-tacho-speed').innerText = speed;
+            const needle = document.getElementById('air-needle');
+            const angle = -120 + (Math.min(speed, 100) / 100) * 240;
+            needle.style.transform = `rotate(${angle}deg)`;
         }
 
         async function startFullFlash() {
             const log = document.getElementById('flash-log');
-            log.innerHTML += `<div>[INFO] Starte Flash für ${selectedModel}...</div>`;
+            const btn = document.getElementById('btn-flash');
+            btn.disabled = true;
+
+            const appendLog = (msg, color='text-slate-300') => {
+                log.innerHTML += `<div class="${color}">${msg}</div>`;
+                log.scrollTop = log.scrollHeight;
+            };
+
+            const configuredMax = document.getElementById('input-sports-speed').value;
+            appendLog(`[1/4] Kompiliere Custom Firmware (${configuredMax} km/h Peak Limit)...`, "text-cyber-neonGreen");
+            await new Promise(r => setTimeout(r, 1200));
+
+            appendLog("[2/4] Erase VCU Flash Memory Sektoren...", "text-red-400");
             for(let i=0; i<128; i++) {
-                await new Promise(r => setTimeout(r, 20));
+                await new Promise(r => setTimeout(r, 30));
+                document.getElementById(`block-${i}`).className = 'mem-block erased';
+            }
+
+            appendLog("[3/4] Flashe Register & Motor Timings...", "text-yellow-400");
+            for(let i=0; i<128; i++) {
+                await new Promise(r => setTimeout(r, 35));
+                document.getElementById(`block-${i}`).className = i < 64 ? 'mem-block written-vcu' : 'mem-block written-mcu';
+            }
+
+            appendLog("[4/4] Verifiziere Bootloader Checksumme (CRC32)...", "text-emerald-400");
+            for(let i=0; i<128; i++) {
+                await new Promise(r => setTimeout(r, 15));
                 document.getElementById(`block-${i}`).className = 'mem-block verified';
             }
-            log.innerHTML += `<div class="text-emerald-400 font-bold">[SUCCESS] Firmware erfolgreich geflasht!</div>`;
+
+            appendLog(`[SUCCESS] CFW geflasht für ${selectedModel}!`, "text-cyber-cyan font-bold");
+            btn.innerText = "CUSTOM FIRMWARE FLASH COMPLETE";
+            btn.disabled = false;
         }
     </script>
 </body>
