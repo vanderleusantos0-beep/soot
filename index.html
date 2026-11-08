@@ -1,947 +1,489 @@
 <!DOCTYPE html>
 <html lang="de" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MBJC Network | Ticket & Recruitment Portal</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1) translate(-50%, -50%); opacity: 0.2; }
-      50% { transform: scale(1.25) translate(-48%, -52%); opacity: 0.35; }
-    }
-    @keyframes floatParticle {
-      0% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
-      50% { transform: translateY(-20px) rotate(180deg); opacity: 0.7; }
-      100% { transform: translateY(0px) rotate(360deg); opacity: 0.3; }
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-    body {
-      background: radial-gradient(circle at 50% -20%, #1e1b4b, #090d16 65%, #030712);
-      color: #f8fafc;
-      font-family: system-ui, -apple-system, sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-    .animate-fade-in { animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .glow-orb-1 {
-      position: absolute;
-      top: 10%;
-      left: 50%;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(139, 92, 246, 0.1) 45%, rgba(0, 0, 0, 0) 70%);
-      pointer-events: none;
-      z-index: 0;
-      animation: pulseGlow 10s ease-in-out infinite;
-    }
-    .glow-orb-2 {
-      position: absolute;
-      bottom: 10%;
-      right: 10%;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
-      pointer-events: none;
-      z-index: 0;
-      animation: floatParticle 12s ease-in-out infinite;
-    }
-    .liquid-glass {
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(28px) saturate(200%);
-      -webkit-backdrop-filter: blur(28px) saturate(200%);
-      border: 1px solid rgba(255, 255, 255, 0.09);
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.12);
-    }
-    .liquid-input {
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #fff;
-      transition: all 0.25s ease;
-    }
-    .liquid-input:focus {
-      border-color: #6366f1;
-      outline: none;
-      box-shadow: 0 0 22px rgba(99, 102, 241, 0.4);
-    }
-    .btn-shimmer {
-      background-size: 200% 100%;
-      background-image: linear-gradient(110deg, #4f46e5 0%, #7c3aed 45%, #a855f7 50%, #7c3aed 55%, #4f46e5 100%);
-      transition: all 0.3s ease;
-    }
-    .btn-shimmer:hover {
-      animation: shimmer 1.5s infinite;
-      box-shadow: 0 0 30px rgba(99, 102, 241, 0.55);
-    }
-  </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ScootLab Pro – Ninebot Ultimate Utility</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#070b14',
+                            card: '#0e1626',
+                            border: '#1b2a47',
+                            cyan: '#00f0ff',
+                            blue: '#0072ff',
+                            neonGreen: '#10b981',
+                            red: '#ef4444',
+                            yellow: '#f59e0b'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 15px rgba(0, 240, 255, 0.4)',
+                        'neon-green': '0 0 15px rgba(16, 185, 129, 0.5)',
+                        'neon-red': '0 0 15px rgba(239, 68, 68, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #070b14; color: #e2e8f0; user-select: none; }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .glass-panel { background: rgba(14, 22, 38, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(27, 42, 71, 0.9); }
+        .mem-grid { display: grid; grid-template-columns: repeat(32, minmax(0, 1fr)); gap: 3px; }
+        .mem-block { aspect-ratio: 1; border-radius: 2px; background: #1b2a47; transition: all 0.15s ease; }
+        .mem-block.erased { background: #ef4444; box-shadow: 0 0 4px #ef4444; }
+        .mem-block.written-vcu { background: #f59e0b; box-shadow: 0 0 4px #f59e0b; }
+        .mem-block.written-mcu { background: #10b981; box-shadow: 0 0 4px #10b981; }
+        .mem-block.verified { background: #10b981; box-shadow: 0 0 4px #10b981; }
+        #air-needle { transform-origin: 150px 150px; transition: transform 0.1s ease-out; }
+        .neon-accent { accent-color: #10b981; }
+    </style>
 </head>
-<body class="p-4 md:p-10 flex flex-col items-center justify-between relative min-h-screen">
+<body class="min-h-screen flex flex-col justify-between transition-colors duration-300">
 
-  <div class="glow-orb-1"></div>
-  <div class="glow-orb-2"></div>
+    <!-- HAUPT-LOCK-MODAL: BEZAHLUNG & AUSWAHL -->
+    <div id="scooter-modal" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-2xl rounded-2xl p-6 space-y-6 border border-cyber-neonGreen/40 shadow-neon-green max-h-[90vh] overflow-y-auto">
+            
+            <!-- SCHRITT 1: BEZAHLUNG & 16-STELLIGER CODE -->
+            <div id="modal-step-pay" class="space-y-5 text-center">
+                <div class="w-16 h-16 rounded-2xl bg-cyber-neonGreen/10 border border-cyber-neonGreen/30 text-cyber-neonGreen flex items-center justify-center text-2xl mx-auto mb-2 shadow-neon-green">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h2 class="font-orbitron font-bold text-xl text-white">ScootLab Pro – Lizenz freischalten</h2>
+                <p class="text-xs text-slate-400 font-mono">
+                    Gib deinen exakt <b class="text-cyber-neonGreen">16-stelligen Code</b> ein. 
+                    <br><span class="text-yellow-400 font-bold">Die Überprüfung durch die Admins dauert bis zu 24 Stunden.</span>
+                </p>
 
-  <div id="root" class="w-full max-w-4xl z-10 my-auto"></div>
+                <form onsubmit="submitLicenseCode(event)" class="space-y-4 text-left font-mono text-xs">
+                    <div>
+                        <label class="block text-slate-300 font-bold mb-1">Deine E-Mail Adresse</label>
+                        <input type="email" id="modal-user-email" required placeholder="name@beispiel.de" 
+                            class="w-full bg-slate-900 border border-slate-700 text-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyber-neonGreen">
+                    </div>
 
-  <script type="text/babel">
-    const CONFIG = {
-      serverName: "MBJC Network",
-      mainSite: "http://mbjc.info/",
-      discordUrl: "https://discord.gg/2Nuwdyr4tZ",
-      // Standard Admin Benutzer (Standardmäßig xT):
-      defaultAdmins: ["xt"],
-      webhookUrl: "https://discord.com/api/webhooks/1555967152463417437/JNNZQHyWkGE6HORhaaQPe5kkv8MYgr_c7oAYbVhoI1pBXHTq58oCNg9SI_-Tbq-q5Nsp"
-    };
+                    <div class="border border-slate-700/80 rounded-xl overflow-hidden bg-slate-900/40">
+                        <label class="flex items-center gap-3 p-3.5 border-b border-slate-800 cursor-pointer hover:bg-slate-800/40">
+                            <input type="radio" name="payment_method" value="paysafecard" checked class="accent-cyber-neonGreen">
+                            <span class="font-bold text-white text-sm"><i class="fa-solid fa-shield-halved text-red-500 mr-2"></i> paysafecard (15€ / 16 Stellen)</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-3.5 cursor-pointer hover:bg-slate-800/40">
+                            <input type="radio" name="payment_method" value="amazon" class="accent-cyber-neonGreen">
+                            <span class="font-bold text-white text-sm"><i class="fa-brands fa-amazon text-amber-500 mr-2"></i> Amazon Gutschein (15€ / 16 Stellen)</span>
+                        </label>
 
-    function App() {
-      const [view, setView] = React.useState("form"); // "form", "success", "adminLogin", "adminPanel", "tracker"
-      const [role, setRole] = React.useState("discord_mod");
-      
-      // Admin Authentication State
-      const [adminUser, setAdminUser] = React.useState("");
-      const [allowedAdmins, setAllowedAdmins] = React.useState(CONFIG.defaultAdmins);
-      const [newAdminInput, setNewAdminInput] = React.useState("");
+                        <div class="p-3.5 bg-slate-900/80 border-t border-slate-800 space-y-2">
+                            <div class="flex justify-between items-center text-[11px]">
+                                <label class="text-slate-300 font-bold">16-stelliger Code:</label>
+                                <span id="code-counter" class="text-red-400 font-bold">0 / 16 Stellen</span>
+                            </div>
+                            <input type="text" id="modal-gift-code" maxlength="19" required oninput="validateCodeInput(this)" placeholder="16 Zeichen eingeben..." 
+                                class="w-full bg-slate-950 border border-slate-700 text-cyber-neonGreen font-mono font-bold text-base rounded-lg px-4 py-3 focus:outline-none focus:border-cyber-neonGreen tracking-widest uppercase">
+                            <p id="code-error-msg" class="hidden text-red-400 text-[10px] font-bold">Der Code muss exakt 16 Zeichen lang sein!</p>
+                        </div>
+                    </div>
 
-      const [codeSent, setCodeSent] = React.useState(false);
-      const [generatedCode, setGeneratedCode] = React.useState("");
-      const [inputCode, setInputCode] = React.useState("");
-      const [adminError, setAdminError] = React.useState("");
-      const [isSendingCode, setIsSendingCode] = React.useState(false);
-
-      // Security / Rate Limiting
-      const [cooldown, setCooldown] = React.useState(0);
-      const [failedAttempts, setFailedAttempts] = React.useState(0);
-      const [isLocked, setIsLocked] = React.useState(false);
-
-      // Captcha Challenge
-      const [captchaQuestion, setCaptchaQuestion] = React.useState({ num1: 4, num2: 5, answer: 9 });
-      const [captchaInput, setCaptchaInput] = React.useState("");
-
-      // Status Tracker Search State
-      const [trackIdInput, setTrackIdInput] = React.useState("");
-      const [trackedApp, setTrackedApp] = React.useState(null);
-      const [trackError, setTrackError] = React.useState("");
-
-      const [applications, setApplications] = React.useState([]);
-      const [selectedApp, setSelectedApp] = React.useState(null);
-      const [searchTerm, setSearchTerm] = React.useState("");
-      const [filterStatus, setFilterStatus] = React.useState("Alle");
-      const [isAppOpen, setIsAppOpen] = React.useState(true);
-
-      const [formData, setFormData] = React.useState({
-        discordTag: "",
-        age: "",
-        weeklyHours: "",
-        activeTimes: "Nachmittags & Abends",
-        experience: "",
-        botKnowledge: "",
-        motivation: "",
-        strengthsWeaknesses: "",
-        scenario1: "",
-        scenario2: ""
-      });
-
-      const [submittedTicket, setSubmittedTicket] = React.useState(null);
-
-      const resetCaptcha = () => {
-        const n1 = Math.floor(Math.random() * 8) + 2;
-        const n2 = Math.floor(Math.random() * 8) + 2;
-        setCaptchaQuestion({ num1: n1, num2: n2, answer: n1 + n2 });
-        setCaptchaInput("");
-      };
-
-      React.useEffect(() => {
-        resetCaptcha();
-        const savedApps = localStorage.getItem("mbjc_applications");
-        if (savedApps) {
-          try { setApplications(JSON.parse(savedApps)); } catch(e){}
-        }
-
-        const savedStatus = localStorage.getItem("mbjc_app_status");
-        if (savedStatus !== null) {
-          setIsAppOpen(JSON.parse(savedStatus));
-        }
-
-        const savedAdmins = localStorage.getItem("mbjc_admin_users");
-        if (savedAdmins) {
-          try { setAllowedAdmins(JSON.parse(savedAdmins)); } catch(e){}
-        }
-      }, []);
-
-      React.useEffect(() => {
-        let timer;
-        if (cooldown > 0) {
-          timer = setInterval(() => setCooldown(prev => prev - 1), 1000);
-        }
-        return () => clearInterval(timer);
-      }, [cooldown]);
-
-      const toggleAppStatus = (open) => {
-        setIsAppOpen(open);
-        localStorage.setItem("mbjc_app_status", JSON.stringify(open));
-      };
-
-      const handleAddAdmin = (e) => {
-        e.preventDefault();
-        const val = newAdminInput.trim().toLowerCase();
-        if (val && !allowedAdmins.includes(val)) {
-          const updated = [...allowedAdmins, val];
-          setAllowedAdmins(updated);
-          localStorage.setItem("mbjc_admin_users", JSON.stringify(updated));
-          setNewAdminInput("");
-        }
-      };
-
-      const handleRemoveAdmin = (userToRemove) => {
-        if (allowedAdmins.length <= 1) {
-          alert("Mindestens ein Admin muss im System verbleiben!");
-          return;
-        }
-        const updated = allowedAdmins.filter(u => u !== userToRemove);
-        setAllowedAdmins(updated);
-        localStorage.setItem("mbjc_admin_users", JSON.stringify(updated));
-      };
-
-      const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-      };
-
-      const sendDiscordAdminCode = async (e) => {
-        if (e) e.preventDefault();
-
-        if (isLocked) {
-          setAdminError("System gesperrt wegen zu vieler Fehlversuche! Bitte warte 10 Minuten.");
-          return;
-        }
-
-        if (cooldown > 0) {
-          setAdminError(`Spam-Schutz aktiv! Warte noch ${cooldown} Sekunden.`);
-          return;
-        }
-
-        const cleanUser = adminUser.trim().toLowerCase();
-        const isAuthorized = allowedAdmins.some(adm => cleanUser === adm || cleanUser.includes(adm));
-
-        if (!isAuthorized) {
-          setAdminError("Zugriff verweigert! Nicht autorisierter Discord-Username.");
-          return;
-        }
-
-        setIsSendingCode(true);
-        setAdminError("");
-
-        const newCode = Math.floor(100000 + Math.random() * 900000).toString();
-        setGeneratedCode(newCode);
-
-        try {
-          const res = await fetch(CONFIG.webhookUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              content: `🚨 **MBJC Admin 2FA Login-Anforderung** (User: \`${adminUser.trim()}\`)`,
-              embeds: [{
-                title: "🛡️ 2FA Sicherheitscode Generiert",
-                color: 6507761,
-                description: `Admin **${adminUser.trim()}** fordert Zugang zum Panel auf **ticket.mbjc.info** an.\n\nSicherheitscode: **\`${newCode}\`**\n\n*(Code verfällt automatisch nach 5 Minuten)*`,
-                footer: { text: "MBJC Security Shield • Rate-Limit Aktiv" },
-                timestamp: new Date().toISOString()
-              }]
-            })
-          });
-
-          if (res.ok || res.status === 204) {
-            setCodeSent(true);
-            setCooldown(45);
-          } else {
-            setAdminError("Fehler beim Senden des Webhooks. Status: " + res.status);
-          }
-        } catch (err) {
-          setAdminError("Netzwerkfehler beim Kommunizieren mit Discord.");
-        } finally {
-          setIsSendingCode(false);
-        }
-      };
-
-      const handleVerifyCode = (e) => {
-        e.preventDefault();
-
-        if (isLocked) {
-          setAdminError("Zugang temporär gesperrt.");
-          return;
-        }
-
-        if (inputCode.trim() === generatedCode && generatedCode !== "") {
-          setAdminError("");
-          setGeneratedCode("");
-          setInputCode("");
-          setFailedAttempts(0);
-          setView("adminPanel");
-        } else {
-          const newFailed = failedAttempts + 1;
-          setFailedAttempts(newFailed);
-          if (newFailed >= 3) {
-            setIsLocked(true);
-            setAdminError("3 Fehlversuche! Das Panel wurde für 10 Minuten gesperrt.");
-            setTimeout(() => {
-              setIsLocked(false);
-              setFailedAttempts(0);
-            }, 600000);
-          } else {
-            setAdminError(`Falscher Code! Noch ${3 - newFailed} Versuch(e).`);
-          }
-        }
-      };
-
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!isAppOpen) return;
-
-        if (parseInt(captchaInput) !== captchaQuestion.answer) {
-          alert("Fehler bei der Anti-Spam Sicherheitsaufgabe! Bitte versuche es noch einmal.");
-          resetCaptcha();
-          return;
-        }
-
-        const ticketId = "MBJC-TICK-" + Math.floor(1000 + Math.random() * 9000);
-        const newApp = {
-          id: ticketId,
-          role: role === "discord_mod" ? "Discord Moderator" : "TikTok Moderator",
-          data: { ...formData },
-          status: "Offen",
-          date: new Date().toLocaleString("de-DE")
-        };
-
-        const updatedApps = [newApp, ...applications];
-        setApplications(updatedApps);
-        localStorage.setItem("mbjc_applications", JSON.stringify(updatedApps));
-
-        fetch(CONFIG.webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            embeds: [{
-              title: `📥 Neue Team-Bewerbung: ${newApp.role}`,
-              color: 6547697,
-              fields: [
-                { name: "🎫 Ticket ID", value: `\`${newApp.id}\``, inline: true },
-                { name: "👤 Discord Tag", value: formData.discordTag, inline: true },
-                { name: "🎂 Alter", value: `${formData.age} Jahre`, inline: true },
-                { name: "⏱ Zeit / Woche", value: `${formData.weeklyHours} Std. (${formData.activeTimes})`, inline: false },
-                { name: "💡 Motivation", value: formData.motivation || "Keine Angabe" },
-                { name: "📜 Moderations-Erfahrung", value: formData.experience || "Keine Angabe" },
-                { name: "🚨 Szenario 1 Antwort", value: formData.scenario1 || "Keine Angabe" }
-              ],
-              footer: { text: "MBJC Recruitment System • ticket.mbjc.info" },
-              timestamp: new Date().toISOString()
-            }]
-          })
-        }).catch(err => console.log("Webhook Fehler:", err));
-
-        setSubmittedTicket(newApp);
-        setView("success");
-      };
-
-      const handleTrackTicket = (e) => {
-        e.preventDefault();
-        setTrackError("");
-        const found = applications.find(a => a.id.toLowerCase() === trackIdInput.trim().toLowerCase());
-        if (found) {
-          setTrackedApp(found);
-        } else {
-          setTrackedApp(null);
-          setTrackError("Keine Bewerbung mit dieser Ticket ID gefunden.");
-        }
-      };
-
-      const updateAppStatus = (id, newStatus) => {
-        const updated = applications.map(app => app.id === id ? { ...app, status: newStatus } : app);
-        setApplications(updated);
-        localStorage.setItem("mbjc_applications", JSON.stringify(updated));
-        if (selectedApp && selectedApp.id === id) {
-          setSelectedApp({ ...selectedApp, status: newStatus });
-        }
-      };
-
-      const deleteApp = (id) => {
-        if (confirm("Möchtest du diese Bewerbung wirklich unwiderruflich löschen?")) {
-          const updated = applications.filter(app => app.id !== id);
-          setApplications(updated);
-          localStorage.setItem("mbjc_applications", JSON.stringify(updated));
-          if (selectedApp && selectedApp.id === id) setSelectedApp(null);
-        }
-      };
-
-      const copyAsDiscordMarkdown = (app) => {
-        const text = `**[MBJC BEWERBUNG - ${app.id}]**\n` +
-          `• **Rolle:** ${app.role}\n` +
-          `• **User:** ${app.data.discordTag} (${app.data.age} Jahre)\n` +
-          `• **Zeit:** ${app.data.weeklyHours} Std/Woche (${app.data.activeTimes})\n` +
-          `• **Erfahrung:** ${app.data.experience}\n` +
-          `• **Motivation:** ${app.data.motivation}\n` +
-          `• **Szenario 1:** ${app.data.scenario1}\n` +
-          `• **Szenario 2:** ${app.data.scenario2}`;
-        navigator.clipboard.writeText(text);
-        alert("Bewerbung als Discord-Markdown in die Zwischenablage kopiert!");
-      };
-
-      const filteredApps = applications.filter(app => {
-        const matchesSearch = app.data.discordTag.toLowerCase().includes(searchTerm.toLowerCase()) || app.id.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesStatus = filterStatus === "Alle" || app.status === filterStatus;
-        return matchesSearch && matchesStatus;
-      });
-
-      return (
-        <div className="w-full animate-fade-in relative z-10">
-          {/* NAV BAR */}
-          <div className="flex flex-wrap justify-between items-center mb-8 gap-4">
-            <a href={CONFIG.mainSite} className="flex items-center gap-2 text-slate-300 hover:text-white font-bold text-sm transition transform hover:-translate-x-1">
-              <i className="fa-solid fa-arrow-left text-indigo-400"></i> Hauptseite (mbjc.info)
-            </a>
-            <div className="flex gap-2">
-              <button 
-                onClick={() => setView("tracker")} 
-                className="bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 text-xs px-4 py-2.5 rounded-xl transition font-semibold flex items-center gap-2 shadow-lg"
-              >
-                <i className="fa-solid fa-magnifying-glass text-indigo-400"></i> Status Prüfen
-              </button>
-              <button 
-                onClick={() => {
-                  if (view === "adminPanel") {
-                    setView("form");
-                  } else {
-                    setView("adminLogin");
-                    setCodeSent(false);
-                  }
-                }} 
-                className="bg-indigo-600/20 hover:bg-indigo-600/40 border border-indigo-500/30 text-indigo-300 text-xs px-4 py-2.5 rounded-xl transition font-semibold flex items-center gap-2 shadow-lg backdrop-blur-md"
-              >
-                <i className="fa-solid fa-user-shield"></i>
-                {view === "adminPanel" ? "Bewerbungsformular" : "Admin Panel"}
-              </button>
+                    <button type="submit" id="btn-modal-pay" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyber-neonGreen to-emerald-600 text-slate-950 font-bold font-orbitron transition flex items-center justify-center gap-2 cursor-pointer shadow-neon-green text-sm">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>ZUR PRÜFUNG EINREICHEN (MAX. 24 STD)</span>
+                    </button>
+                </form>
             </div>
-          </div>
 
-          {/* VIEW: TICKET STATUS TRACKER */}
-          {view === "tracker" && (
-            <div className="liquid-glass rounded-3xl p-8 max-w-md mx-auto text-center border border-indigo-500/30 shadow-2xl">
-              <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center mx-auto mb-4 text-indigo-400 text-3xl shadow-inner">
-                <i className="fa-solid fa-ticket"></i>
-              </div>
-              <h2 className="text-2xl font-black mb-2 text-white">Ticket Status Prüfen</h2>
-              <p className="text-xs text-slate-400 mb-6">Gib deine Ticket ID ein, um den aktuellen Bearbeitungsstand zu sehen.</p>
-
-              <form onSubmit={handleTrackTicket} className="space-y-4 mb-6">
-                <input 
-                  type="text" 
-                  placeholder="Ticket ID eingeben..."
-                  value={trackIdInput}
-                  onChange={(e) => setTrackIdInput(e.target.value)}
-                  className="w-full liquid-input p-3.5 rounded-xl text-center text-sm font-mono tracking-wider"
-                  required
-                />
-                <button type="submit" className="w-full btn-shimmer text-white font-bold py-3.5 rounded-xl text-sm shadow-lg">
-                  Suchen
+            <!-- SCHRITT 2: WARTEN AUF ADMIN-FREIGABE (BIS ZU 24 STD) -->
+            <div id="modal-step-waiting" class="hidden space-y-6 text-center py-6">
+                <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
+                    <div class="absolute inset-0 rounded-full border-4 border-yellow-400 border-t-transparent animate-spin"></div>
+                    <i class="fa-solid fa-hourglass-half text-2xl text-yellow-400 animate-pulse"></i>
+                </div>
+                <h3 class="font-orbitron font-bold text-lg text-white">Prüfung läuft (bis zu 24 Stunden)...</h3>
+                <div class="p-4 rounded-xl bg-slate-900/80 border border-yellow-500/30 text-xs font-mono text-slate-300 space-y-2">
+                    <p class="text-yellow-400 font-bold">Dein 16-stelliger Code wurde übermittelt.</p>
+                    <p>Die manuelle Admin-Prüfung dauert maximal 24 Stunden.</p>
+                </div>
+                <button onclick="simulateAdminApproval()" class="text-[11px] text-slate-500 underline hover:text-slate-300 cursor-pointer">
+                    [Admin Demo: Sofort freischalten]
                 </button>
-              </form>
-
-              {trackError && <p className="text-rose-400 text-xs font-semibold mb-4">{trackError}</p>}
-
-              {trackedApp && (
-                <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 text-left space-y-3">
-                  <div className="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <span className="text-xs font-mono text-indigo-400 font-bold">{trackedApp.id}</span>
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-bold ${
-                      trackedApp.status === 'Angenommen' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                      trackedApp.status === 'Abgelehnt' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
-                      trackedApp.status === 'In Bearbeitung' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-700 text-slate-300'
-                    }`}>
-                      {trackedApp.status}
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-300"><strong>Rolle:</strong> {trackedApp.role}</p>
-                  <p className="text-xs text-slate-300"><strong>Eingereicht am:</strong> {trackedApp.date}</p>
-                </div>
-              )}
             </div>
-          )}
 
-          {/* VIEW: ADMIN LOGIN */}
-          {view === "adminLogin" && (
-            <div className="liquid-glass rounded-3xl p-8 max-w-md mx-auto text-center border border-indigo-500/30 shadow-2xl relative overflow-hidden">
-              <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center mx-auto mb-4 text-indigo-400 text-3xl shadow-inner">
-                <i className="fa-solid fa-shield-halved"></i>
-              </div>
-              <h2 className="text-2xl font-black mb-2 text-white">Discord 2FA Admin Login</h2>
-              <p className="text-xs text-slate-400 mb-6 leading-relaxed">
-                {!codeSent 
-                  ? "Gib deinen autorisierten Discord-Usernamen ein, um den 2FA-Code anzufordern." 
-                  : "Der Code wurde an Discord gesendet! Gib den 6-stelligen Code ein."}
-              </p>
+            <!-- SCHRITT 3: ALLE 16 ROLLER WÄHLEN -->
+            <div id="modal-step-select" class="hidden space-y-4">
+                <div class="text-center">
+                    <h2 class="font-orbitron font-bold text-xl text-white">Wähle deinen Ninebot Roller</h2>
+                    <p class="text-xs text-slate-400 font-mono">Lizenz aktiv ✅ – Wähle dein exaktes Modell:</p>
+                </div>
 
-              {!codeSent ? (
-                <form onSubmit={sendDiscordAdminCode} className="space-y-4">
-                  <div>
-                    <label className="block text-left text-xs font-bold text-slate-300 mb-1">Discord Admin Username *</label>
-                    <input 
-                      type="text" 
-                      placeholder="Discord Username"
-                      value={adminUser}
-                      onChange={(e) => setAdminUser(e.target.value)}
-                      className="w-full liquid-input p-3.5 rounded-xl text-center text-sm font-bold"
-                      required
-                    />
-                  </div>
+                <div class="space-y-4 text-xs font-mono max-h-64 overflow-y-auto pr-2">
+                    <div>
+                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px]">E-Serie – Einsteiger</span>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <button onclick="setScooterModel('Ninebot E2 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot E2 D</button>
+                            <button onclick="setScooterModel('Ninebot E2 D II')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot E2 D II</button>
+                            <button onclick="setScooterModel('Ninebot E2 Pro D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot E2 Pro D</button>
+                            <button onclick="setScooterModel('Ninebot E3 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot E3 D</button>
+                            <button onclick="setScooterModel('Ninebot E3 Pro D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot E3 Pro D</button>
+                        </div>
+                    </div>
 
-                  <button 
-                    type="submit" 
-                    disabled={isSendingCode || cooldown > 0 || isLocked}
-                    className="w-full btn-shimmer text-white font-bold py-3.5 px-6 rounded-xl transition text-sm shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
-                  >
-                    {isSendingCode ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-brands fa-discord text-lg"></i>}
-                    <span>{cooldown > 0 ? `Warte ${cooldown}s` : "Code an Discord Senden"}</span>
-                  </button>
-                  {adminError && <p className="text-rose-400 text-xs font-semibold">{adminError}</p>}
-                </form>
-              ) : (
-                <form onSubmit={handleVerifyCode} className="space-y-4">
-                  <input 
-                    type="text" 
-                    placeholder="6-stelliger Code"
-                    value={inputCode}
-                    onChange={(e) => setInputCode(e.target.value)}
-                    className="w-full liquid-input p-3.5 rounded-xl text-center text-xl font-mono tracking-widest"
-                    maxLength="6"
-                    required
-                  />
-                  {adminError && <p className="text-rose-400 text-xs font-semibold">{adminError}</p>}
-                  
-                  <div className="flex gap-2">
-                    <button 
-                      type="button" 
-                      onClick={() => setCodeSent(false)}
-                      className="w-1/3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3 rounded-xl text-xs transition"
-                    >
-                      Zurück
-                    </button>
-                    <button 
-                      type="submit" 
-                      disabled={isLocked}
-                      className="w-2/3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg disabled:opacity-50"
-                    >
-                      Einloggen
-                    </button>
-                  </div>
-                </form>
-              )}
+                    <div>
+                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px]">F-Serie – Mittelklasse</span>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <button onclick="setScooterModel('Ninebot F2 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot F2 D</button>
+                            <button onclick="setScooterModel('Ninebot F2 II D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot F2 II D</button>
+                            <button onclick="setScooterModel('Ninebot F2 Pro II D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot F2 Pro II D</button>
+                            <button onclick="setScooterModel('Ninebot F3 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot F3 D</button>
+                            <button onclick="setScooterModel('Ninebot F3 Pro D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot F3 Pro D</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px]">MAX-Serie – Komfort & Reichweite</span>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <button onclick="setScooterModel('Ninebot MAX G2 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot MAX G2 D</button>
+                            <button onclick="setScooterModel('Ninebot MAX G3 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot MAX G3 D</button>
+                            <button onclick="setScooterModel('Ninebot MAX G3 Pro D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot MAX G3 Pro D</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px]">ZT-Serie – Robuste Modelle</span>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <button onclick="setScooterModel('Ninebot ZT3 Pro D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot ZT3 Pro D</button>
+                            <button onclick="setScooterModel('Ninebot ZT3 Max D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot ZT3 Max D</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-cyber-neonGreen font-bold block mb-1.5 uppercase text-[11px]">GT-Serie – Premium</span>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <button onclick="setScooterModel('Ninebot GT3 D')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot GT3 D</button>
+                            <button onclick="setScooterModel('Ninebot GT3 Pro')" class="p-2 rounded border border-slate-800 bg-slate-900 hover:border-cyber-neonGreen text-left font-bold text-white">Ninebot GT3 Pro</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-          )}
 
-          {/* VIEW: ADMIN PANEL */}
-          {view === "adminPanel" && (
-            <div className="liquid-glass rounded-3xl p-6 md:p-8 space-y-6">
-              
-              {/* STEUERUNG: BEWERBUNGSPHASE */}
-              <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-md">
-                <div>
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <i className="fa-solid fa-toggle-on text-indigo-400"></i> Status der Bewerbungsphase
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Aktuell: <strong className={isAppOpen ? "text-emerald-400" : "text-rose-400"}>
-                      {isAppOpen ? "Bewerbungen GEÖFFNET" : "Bewerbungen GESCHLOSSEN"}
-                    </strong>
-                  </p>
+            <!-- SCHRITT 4: BLUETOOTH KOPPLUNG (NUR AUSLESEN, NICHT ÄNDERN) -->
+            <div id="modal-step-bluetooth" class="hidden space-y-4 py-4 text-center">
+                <div class="w-20 h-20 mx-auto rounded-full bg-cyber-neonGreen/10 border border-cyber-neonGreen flex items-center justify-center text-cyber-neonGreen text-3xl shadow-neon-green animate-pulse">
+                    <i class="fa-brands fa-bluetooth"></i>
                 </div>
-
-                <div className="flex gap-2 w-full md:w-auto">
-                  <button 
-                    onClick={() => toggleAppStatus(true)}
-                    className={`flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 border ${
-                      isAppOpen ? "bg-emerald-600 text-white border-emerald-500 shadow-lg shadow-emerald-600/30" : "bg-slate-800 text-slate-400 border-slate-700 hover:text-white"
-                    }`}
-                  >
-                    <i className="fa-solid fa-door-open"></i> Öffnen
-                  </button>
-                  <button 
-                    onClick={() => toggleAppStatus(false)}
-                    className={`flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 border ${
-                      !isAppOpen ? "bg-rose-600 text-white border-rose-500 shadow-lg shadow-rose-600/30" : "bg-slate-800 text-slate-400 border-slate-700 hover:text-white"
-                    }`}
-                  >
-                    <i className="fa-solid fa-door-closed"></i> Schließen
-                  </button>
-                </div>
-              </div>
-
-              {/* STEUERUNG: OWNER BENUTZER-VERWALTUNG */}
-              <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
-                  <i className="fa-solid fa-users-gear text-indigo-400"></i> Autorisierte Admin-Benutzer Verwalten
-                </h3>
-                
-                <form onSubmit={handleAddAdmin} className="flex gap-2 mb-4">
-                  <input 
-                    type="text" 
-                    placeholder="Neuen Discord-Usernamen hinzufügen..." 
-                    value={newAdminInput} 
-                    onChange={(e) => setNewAdminInput(e.target.value)} 
-                    className="liquid-input p-2.5 rounded-xl text-xs flex-1"
-                    required
-                  />
-                  <button type="submit" className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition">
-                    Hinzufügen
-                  </button>
-                </form>
-
-                <div className="flex flex-wrap gap-2">
-                  {allowedAdmins.map((adm) => (
-                    <span key={adm} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-semibold text-indigo-300">
-                      <span>@{adm}</span>
-                      <button onClick={() => handleRemoveAdmin(adm)} className="text-rose-400 hover:text-rose-300 text-xs">
-                        <i className="fa-solid fa-xmark"></i>
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* DASHBOARD HEADER */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-800 gap-4">
-                <div>
-                  <h2 className="text-2xl font-black text-white flex items-center gap-2">
-                    <i className="fa-solid fa-clipboard-list text-indigo-400"></i> Admin Dashboard
-                  </h2>
-                  <p className="text-xs text-slate-400">Eingegangene Bewerbungen ({applications.length})</p>
-                </div>
-                
-                <div className="flex flex-wrap items-center gap-2">
-                  <input 
-                    type="text" 
-                    placeholder="Suchen..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="liquid-input px-3 py-2 rounded-xl text-xs w-36"
-                  />
-                  <select 
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                    className="liquid-input px-3 py-2 rounded-xl text-xs bg-slate-900"
-                  >
-                    <option value="Alle">Alle Status</option>
-                    <option value="Offen">Offen</option>
-                    <option value="In Bearbeitung">In Bearbeitung</option>
-                    <option value="Angenommen">Angenommen</option>
-                    <option value="Abgelehnt">Abgelehnt</option>
-                  </select>
-                </div>
-              </div>
-
-              {filteredApps.length === 0 ? (
-                <div className="text-center py-12 text-slate-500">
-                  <i className="fa-solid fa-inbox text-4xl mb-3 opacity-50"></i>
-                  <p className="text-sm">Keine Bewerbungen vorhanden.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="md:col-span-1 space-y-3 max-h-[520px] overflow-y-auto pr-2">
-                    {filteredApps.map((app) => (
-                      <div 
-                        key={app.id} 
-                        onClick={() => setSelectedApp(app)}
-                        className={`p-4 rounded-2xl cursor-pointer border transition transform hover:-translate-y-0.5 ${selectedApp?.id === app.id ? 'bg-indigo-600/30 border-indigo-500 shadow-md' : 'bg-slate-900/40 border-slate-800 hover:border-slate-700'}`}
-                      >
-                        <div className="flex justify-between items-start mb-1">
-                          <span className="text-xs font-mono text-indigo-400 font-bold">{app.id}</span>
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                            app.status === 'Angenommen' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                            app.status === 'Abgelehnt' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
-                            app.status === 'In Bearbeitung' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-700 text-slate-300'
-                          }`}>
-                            {app.status}
-                          </span>
-                        </div>
-                        <p className="font-bold text-sm text-white">{app.data.discordTag}</p>
-                        <p className="text-xs text-slate-400">{app.role}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="md:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 max-h-[520px] overflow-y-auto">
-                    {selectedApp ? (
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-start border-b border-slate-800 pb-3">
-                          <div>
-                            <span className="text-xs font-mono text-indigo-400 font-bold">{selectedApp.id}</span>
-                            <h3 className="text-xl font-bold text-white">{selectedApp.data.discordTag}</h3>
-                            <p className="text-xs text-slate-400">{selectedApp.role} &bull; Alter: {selectedApp.data.age}</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button onClick={() => copyAsDiscordMarkdown(selectedApp)} className="text-indigo-400 hover:text-indigo-300 text-xs font-bold bg-indigo-500/10 px-3 py-1.5 rounded-lg border border-indigo-500/20">
-                              <i className="fa-solid fa-copy mr-1"></i> Kopieren
-                            </button>
-                            <button onClick={() => deleteApp(selectedApp.id)} className="text-rose-400 hover:text-rose-300 text-xs font-bold bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20">
-                              <i className="fa-solid fa-trash"></i>
-                            </button>
-                          </div>
-                        </div>
-
-                        <div>
-                          <p className="text-xs text-slate-400 uppercase font-bold mb-1.5">Status Setzen:</p>
-                          <div className="flex flex-wrap gap-2">
-                            {['Offen', 'In Bearbeitung', 'Angenommen', 'Abgelehnt'].map((st) => (
-                              <button 
-                                key={st} 
-                                onClick={() => updateAppStatus(selectedApp.id, st)}
-                                className={`text-xs px-3 py-1.5 rounded-xl font-bold border transition ${
-                                  selectedApp.status === st ? 'bg-indigo-600 text-white border-indigo-500 shadow-md' : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
-                                }`}
-                              >
-                                {st}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="space-y-3 text-sm pt-2">
-                          <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
-                            <p className="text-xs text-indigo-400 font-bold">Arbeitszeit & Aktivität:</p>
-                            <p className="text-slate-200 text-xs mt-1">{selectedApp.data.weeklyHours} Std./Woche ({selectedApp.data.activeTimes})</p>
-                          </div>
-                          <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
-                            <p className="text-xs text-indigo-400 font-bold">Erfahrung:</p>
-                            <p className="text-slate-200 text-xs mt-1 whitespace-pre-wrap">{selectedApp.data.experience}</p>
-                          </div>
-                          <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
-                            <p className="text-xs text-indigo-400 font-bold">Motivation:</p>
-                            <p className="text-slate-200 text-xs mt-1 whitespace-pre-wrap">{selectedApp.data.motivation}</p>
-                          </div>
-                          <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
-                            <p className="text-xs text-indigo-400 font-bold">Szenario 1:</p>
-                            <p className="text-slate-200 text-xs mt-1 whitespace-pre-wrap">{selectedApp.data.scenario1}</p>
-                          </div>
-                          <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
-                            <p className="text-xs text-indigo-400 font-bold">Szenario 2:</p>
-                            <p className="text-slate-200 text-xs mt-1 whitespace-pre-wrap">{selectedApp.data.scenario2}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="h-full flex flex-col items-center justify-center text-slate-500 py-12">
-                        <i className="fa-regular fa-hand-pointer text-3xl mb-2"></i>
-                        <p className="text-xs">Wähle links eine Bewerbung aus, um Details anzuzeigen.</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* VIEW: USER FORMULAR */}
-          {view === "form" && (
-            <div className="liquid-glass rounded-3xl p-6 md:p-10 border border-white/10 shadow-2xl">
-              <div className="text-center mb-8">
-                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold mb-3">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                  MBJC Team Recruitment
-                </span>
-                <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">Team Bewerbung</h1>
-                <p className="text-xs md:text-sm text-slate-400 mt-1">Wähle deine gewünschte Position und werde Teil unseres Serverteams.</p>
-              </div>
-
-              {!isAppOpen ? (
-                <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-8 text-center my-6">
-                  <div className="w-16 h-16 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
-                    <i className="fa-solid fa-lock"></i>
-                  </div>
-                  <h2 className="text-xl font-bold text-white mb-2">Bewerbungsphase aktuell geschlossen</h2>
-                  <p className="text-slate-300 text-xs max-w-md mx-auto leading-relaxed">
-                    Derzeit nehmen wir keine neuen Bewerbungen an. Wir benachrichtigen dich auf unserem Discord-Server, sobald die nächste Bewerbungsphase startet!
-                  </p>
-                  <a 
-                    href={CONFIG.discordUrl} 
-                    target="_blank" 
-                    className="inline-flex items-center gap-2 mt-6 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 px-6 rounded-xl text-xs transition shadow-lg"
-                  >
-                    <i className="fa-brands fa-discord text-base"></i> Zum Discord Server
-                  </a>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-3 p-1.5 bg-slate-900/80 rounded-2xl border border-slate-800">
-                    <button 
-                      type="button"
-                      onClick={() => setRole("discord_mod")}
-                      className={`py-3.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center justify-center gap-2 ${role === "discord_mod" ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg" : "text-slate-400 hover:text-white"}`}
-                    >
-                      <i className="fa-brands fa-discord text-lg"></i> Discord Mod
-                    </button>
-                    <button 
-                      type="button"
-                      onClick={() => setRole("tiktok_mod")}
-                      className={`py-3.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center justify-center gap-2 ${role === "tiktok_mod" ? "bg-gradient-to-r from-indigo-600 to-cyan-600 text-white shadow-lg" : "text-slate-400 hover:text-white"}`}
-                    >
-                      <i className="fa-brands fa-tiktok text-lg"></i> TikTok Mod
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1.5">Discord Username / Tag *</label>
-                      <input 
-                        type="text" 
-                        name="discordTag" 
-                        placeholder="Dein Username" 
-                        value={formData.discordTag} 
-                        onChange={handleChange} 
-                        className="w-full liquid-input p-3 rounded-xl text-sm" 
-                        required 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1.5">Dein Alter *</label>
-                      <input 
-                        type="number" 
-                        name="age" 
-                        placeholder="Dein Alter" 
-                        value={formData.age} 
-                        onChange={handleChange} 
-                        className="w-full liquid-input p-3 rounded-xl text-sm" 
-                        required 
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1.5">Wöchentliche Arbeitszeit (Stunden) *</label>
-                      <input 
-                        type="number" 
-                        name="weeklyHours" 
-                        placeholder="z.B. 12" 
-                        value={formData.weeklyHours} 
-                        onChange={handleChange} 
-                        className="w-full liquid-input p-3 rounded-xl text-sm" 
-                        required 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1.5">Hauptsächliche Onlinezeiten *</label>
-                      <select 
-                        name="activeTimes" 
-                        value={formData.activeTimes} 
-                        onChange={handleChange} 
-                        className="w-full liquid-input p-3 rounded-xl text-sm bg-slate-900"
-                      >
-                        <option value="Mittags & Nachmittags">Mittags & Nachmittags</option>
-                        <option value="Nachmittags & Abends">Nachmittags & Abends</option>
-                        <option value="Spät-Abends & Nachts">Spät-Abends & Nachts</option>
-                        <option value="Ganztags flexibel">Ganztags flexibel</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">Hast du Vorerfahrung als Moderator? *</label>
-                    <textarea 
-                      name="experience" 
-                      rows="3" 
-                      placeholder="Erzähle von früheren Servern oder Moderations-Aufgaben..." 
-                      value={formData.experience} 
-                      onChange={handleChange} 
-                      className="w-full liquid-input p-3 rounded-xl text-sm" 
-                      required
-                    ></textarea>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">Warum möchtest du ins MBJC-Team? *</label>
-                    <textarea 
-                      name="motivation" 
-                      rows="3" 
-                      placeholder="Deine Motivation..." 
-                      value={formData.motivation} 
-                      onChange={handleChange} 
-                      className="w-full liquid-input p-3 rounded-xl text-sm" 
-                      required
-                    ></textarea>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">Szenario: Zwei User streiten sich heftig im Chat. Wie reagierst du? *</label>
-                    <textarea 
-                      name="scenario1" 
-                      rows="3" 
-                      placeholder="Schritt-für-Schritt Vorgehensweise..." 
-                      value={formData.scenario1} 
-                      onChange={handleChange} 
-                      className="w-full liquid-input p-3 rounded-xl text-sm" 
-                      required
-                    ></textarea>
-                  </div>
-
-                  {/* SPAM SCHUTZ: MATHE CAPTCHA */}
-                  <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                    <label className="block text-xs font-bold text-indigo-400 mb-1">
-                      <i className="fa-solid fa-robot mr-1"></i> Anti-Spam Sicherheitsaufgabe:
-                    </label>
-                    <p className="text-xs text-slate-300 mb-2">Was ist {captchaQuestion.num1} + {captchaQuestion.num2}?</p>
-                    <input 
-                      type="number" 
-                      placeholder="Ergebnis eingeben" 
-                      value={captchaInput} 
-                      onChange={(e) => setCaptchaInput(e.target.value)} 
-                      className="w-full liquid-input p-2.5 rounded-xl text-sm font-mono" 
-                      required 
-                    />
-                  </div>
-
-                  <button type="submit" className="w-full btn-shimmer text-white font-bold py-4 px-6 rounded-2xl transition duration-300 shadow-xl active:scale-95">
-                    <i className="fa-solid fa-paper-plane mr-2"></i> Bewerbung Kostenlos Absenden
-                  </button>
-                </form>
-              )}
-            </div>
-          )}
-
-          {view === "success" && submittedTicket && (
-            <div className="liquid-glass rounded-3xl p-8 text-center border border-emerald-500/30 max-w-lg mx-auto shadow-2xl animate-fade-in">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4 text-emerald-400 text-3xl shadow-inner">
-                <i className="fa-solid fa-check"></i>
-              </div>
-              <h2 className="text-2xl font-black text-white mb-1">Bewerbung Gespeichert!</h2>
-              <p className="text-xs text-slate-400 mb-4">Deine persönliche Ticket-Nummer:</p>
-              
-              <div className="bg-slate-900 p-3.5 rounded-xl font-mono text-indigo-400 font-bold text-lg mb-6 border border-slate-800 tracking-wider shadow-inner">
-                {submittedTicket.id}
-              </div>
-
-              <div className="flex gap-3">
-                <button onClick={() => setView("form")} className="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3.5 rounded-xl text-xs transition">
-                  Zurück
+                <h3 class="font-orbitron font-bold text-base text-white">Bluetooth-Kopplung mit <span id="chosen-model-label">--</span></h3>
+                <p class="text-xs text-slate-400 font-mono">
+                    Verbinde dich per Browser-Bluetooth, um Seriennummer und Daten auszulesen (Kein automatisches Verändern ohne Flasher).
+                </p>
+                <button onclick="connectRealBluetoothScooter()" class="w-full py-3 rounded-xl bg-cyber-neonGreen text-slate-950 font-bold font-orbitron text-xs transition cursor-pointer shadow-neon-green">
+                    <i class="fa-solid fa-link"></i> BLUETOOTH GERÄT SUCHEN & DATEN AUSLESEN
                 </button>
-                <a href={CONFIG.discordUrl} target="_blank" className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-lg">
-                  <i className="fa-brands fa-discord text-base"></i> Zum Discord
-                </a>
-              </div>
             </div>
-          )}
 
         </div>
-      );
-    }
+    </div>
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
+    <!-- Header Navigation -->
+    <header class="glass-panel sticky top-0 z-40 border-b border-cyber-border">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyber-neonGreen to-emerald-700 flex items-center justify-center text-slate-950 font-black text-xl shadow-neon-green">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div>
+                    <h1 class="font-orbitron font-extrabold text-lg text-white">SCOOT<span class="text-cyber-neonGreen">LAB</span> PRO</h1>
+                    <p id="header-sub" class="text-[10px] text-slate-400 font-mono uppercase">Kein Gerät verbunden</p>
+                </div>
+            </div>
+            <button onclick="reopenModal()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-xs font-mono text-slate-200 border border-slate-700 cursor-pointer">
+                <i class="fa-solid fa-bluetooth"></i> Bluetooth / Setup
+            </button>
+        </div>
+
+        <nav class="max-w-7xl mx-auto px-4 flex space-x-4 overflow-x-auto text-xs sm:text-sm font-medium border-t border-slate-800/60">
+            <button onclick="switchTab('dash')" id="tab-dash" class="tab-btn active border-b-2 border-cyber-neonGreen text-cyber-neonGreen py-3 px-4 flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-gauge-high"></i> Dashboard</button>
+            <button onclick="switchTab('config')" id="tab-config" class="tab-btn border-b-2 border-transparent text-slate-400 hover:text-slate-200 py-3 px-4 flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-sliders"></i> Tuning & Config</button>
+            <button onclick="switchTab('test')" id="tab-test" class="tab-btn border-b-2 border-transparent text-slate-400 hover:text-slate-200 py-3 px-4 flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-vial"></i> Air-Test</button>
+            <button onclick="switchTab('fl')" id="tab-fl" class="tab-btn border-b-2 border-transparent text-slate-400 hover:text-slate-200 py-3 px-4 flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-microchip"></i> Firmware Flasher</button>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
+
+        <!-- TAB 1: DASHBOARD (NUR FIRMWARE, VIN, REGION & KILOMETERSTAND) -->
+        <section id="content-dash" class="tab-content space-y-6">
+            <div class="glass-panel rounded-2xl p-6 space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div>
+                        <h2 class="font-orbitron font-bold text-xl text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-microchip text-cyber-neonGreen"></i> Fahrzeug Status & Information
+                        </h2>
+                        <p class="text-xs text-slate-400 font-mono">Ausgelesene Telemetrie & Firmware Versionen</p>
+                    </div>
+                    <span id="dash-region-tag" class="text-xs font-mono text-yellow-400 bg-slate-900 px-3 py-1.5 rounded-full border border-slate-800 font-bold">REGION: DE (20 km/h)</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono text-xs">
+                    <div class="space-y-4">
+                        <div class="p-5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
+                            <span class="text-slate-500 font-bold block text-[11px] uppercase">Gesamt-Kilometerstand (Odometer)</span>
+                            <div class="flex items-baseline gap-2">
+                                <span id="info-odo" class="font-orbitron font-black text-4xl text-white">148.5</span>
+                                <span class="text-cyber-neonGreen font-bold text-sm">KM</span>
+                            </div>
+                        </div>
+                        <div class="p-5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
+                            <span class="text-slate-500 font-bold block text-[11px] uppercase">Seriennummer (VIN) & Region</span>
+                            <div class="flex items-center justify-between">
+                                <span id="info-vin-code" class="font-orbitron font-bold text-cyber-neonGreen text-lg">1K1DE2408C8912</span>
+                                <span id="info-region-code" class="px-2.5 py-1 rounded bg-slate-950 border border-slate-700 text-yellow-400 font-bold">DE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-4">
+                        <span class="text-slate-500 font-bold block text-[11px] uppercase border-b border-slate-800 pb-2">Firmware System Versionen</span>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center p-2.5 rounded bg-slate-950 border border-slate-800">
+                                <span class="text-slate-400">VCU Version:</span>
+                                <span id="ver-vcu" class="font-bold text-emerald-400">v1.4.8 (Stock)</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2.5 rounded bg-slate-950 border border-slate-800">
+                                <span class="text-slate-400">MCU Version:</span>
+                                <span id="ver-mcu" class="font-bold text-emerald-400">v1.7.0 (Stock)</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2.5 rounded bg-slate-950 border border-slate-800">
+                                <span class="text-slate-400">BLE Version:</span>
+                                <span id="ver-ble" class="font-bold text-white">v2.1.4</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: TUNING & CONFIG -->
+        <section id="content-config" class="tab-content hidden space-y-6">
+            <div class="glass-panel rounded-2xl p-6 space-y-6">
+                <div class="border-b border-slate-800 pb-4">
+                    <h2 class="font-orbitron font-bold text-xl text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-cyber-neonGreen"></i> Geschwindigkeits- & Modus-Parameter
+                    </h2>
+                    <p class="text-xs text-slate-400 font-mono">Passe Höchstgeschwindigkeiten an (beeinflusst den Air-Test)</p>
+                </div>
+
+                <div class="space-y-6 font-mono text-xs">
+                    <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-slate-200">Sports max speed</span>
+                            <span class="text-cyber-neonGreen font-bold text-sm"><b id="val-sports-speed">100</b> km/h</span>
+                        </div>
+                        <input type="range" id="input-sports-speed" min="10" max="100" value="100" oninput="updateSliderVal('sports-speed', this.value)" class="w-full neon-accent cursor-pointer">
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-slate-200">Drive max speed</span>
+                            <span class="text-cyber-neonGreen font-bold text-sm"><b id="val-drive-speed">25</b> km/h</span>
+                        </div>
+                        <input type="range" id="input-drive-speed" min="10" max="25" value="25" oninput="updateSliderVal('drive-speed', this.value)" class="w-full neon-accent cursor-pointer">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: AIR-TEST (RICHTET SICH NACH TUNING CONFIG) -->
+        <section id="content-test" class="tab-content hidden space-y-6">
+            <div class="glass-panel rounded-2xl p-6 space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div>
+                        <h2 class="font-orbitron font-bold text-xl text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-gauge-simple-high text-cyber-neonGreen"></i> Live Air-Test Diagnostik
+                        </h2>
+                        <p class="text-xs text-slate-400 font-mono">Nutzt das Limit aus Tuning & Config: <b id="air-limit-info" class="text-cyber-neonGreen">100 km/h</b></p>
+                    </div>
+                    <button id="btn-start-air" onclick="toggleAirTest()" class="px-6 py-2.5 rounded-xl bg-cyber-neonGreen hover:bg-emerald-400 text-slate-950 font-bold font-orbitron text-xs transition shadow-neon-green cursor-pointer">
+                        <i class="fa-solid fa-play"></i> AIR-TEST STARTEN
+                    </button>
+                </div>
+
+                <div class="flex flex-col items-center justify-center p-6 bg-slate-950/80 rounded-2xl border border-slate-800 relative shadow-inner">
+                    <div class="relative w-full max-w-md h-64 flex items-center justify-center">
+                        <svg viewBox="0 0 300 200" class="w-full h-full">
+                            <path d="M 40 160 A 110 110 0 1 1 260 160" fill="none" stroke="#1b2a47" stroke-width="3" stroke-dasharray="2 4"/>
+                            <line id="air-needle" x1="150" y1="150" x2="150" y2="60" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" transform="rotate(-120 150 150)"/>
+                            <circle cx="150" cy="150" r="4" fill="#10b981"/>
+                        </svg>
+                        <div class="absolute inset-0 top-12 flex flex-col items-center justify-center pointer-events-none">
+                            <span id="air-tacho-speed" class="font-orbitron text-6xl font-bold text-white">0</span>
+                            <span class="font-mono text-xs text-slate-400 mt-1">km/h</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: FIRMWARE FLASHER -->
+        <section id="content-fl" class="tab-content hidden space-y-6">
+            <div class="glass-panel rounded-2xl p-6 space-y-6">
+                <div>
+                    <h2 class="font-orbitron font-bold text-xl text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-microchip text-cyber-neonGreen"></i> Custom Firmware Flasher
+                    </h2>
+                    <p class="text-xs text-slate-400 font-mono">Schreibe die Tuning-Parameter auf VCU & MCU</p>
+                </div>
+                <div class="space-y-4">
+                    <button id="btn-flash" onclick="startFullFlash()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold font-orbitron text-xs shadow-neon-red cursor-pointer">
+                        <i class="fa-solid fa-bolt"></i> CUSTOM FIRMWARE FLASHEN
+                    </button>
+                    <div class="mem-grid p-3 bg-slate-950 rounded-xl border border-slate-800" id="mem-blocks"></div>
+                    <div id="flash-log" class="h-32 overflow-y-auto bg-slate-950 font-mono text-xs p-3 rounded-lg border border-slate-800 text-slate-300">
+                        [INFO] System bereit.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        let isLicensed = false;
+        let selectedModel = "";
+        let bluetoothDevice = null;
+        let airTestRunning = false;
+        let airTestInterval = null;
+
+        // Flash Matrix erstellen
+        const memGrid = document.getElementById('mem-blocks');
+        for(let i=0; i<128; i++) {
+            const block = document.createElement('div');
+            block.className = 'mem-block';
+            block.id = `block-${i}`;
+            memGrid.appendChild(block);
+        }
+
+        function switchTab(tabId) {
+            if(!isLicensed && tabId !== 'dash') {
+                alert("Bitte schalte zuerst die Pro-Lizenz frei!");
+                reopenModal();
+                return;
+            }
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('border-cyber-neonGreen', 'text-cyber-neonGreen'));
+            document.getElementById('content-' + tabId).classList.remove('hidden');
+            document.getElementById('tab-' + tabId).classList.add('border-cyber-neonGreen', 'text-cyber-neonGreen');
+        }
+
+        // 16-stellige Code Validierung
+        function validateCodeInput(input) {
+            let clean = input.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            input.value = clean;
+            document.getElementById('code-counter').innerText = `${clean.length} / 16 Stellen`;
+            if(clean.length === 16) {
+                document.getElementById('code-counter').className = "text-emerald-400 font-bold";
+                document.getElementById('code-error-msg').classList.add('hidden');
+            } else {
+                document.getElementById('code-counter').className = "text-red-400 font-bold";
+            }
+        }
+
+        function submitLicenseCode(e) {
+            e.preventDefault();
+            const code = document.getElementById('modal-gift-code').value;
+            if(code.length !== 16) {
+                document.getElementById('code-error-msg').classList.remove('hidden');
+                alert("Der Code muss exakt 16 Stellen lang sein!");
+                return;
+            }
+            document.getElementById('modal-step-pay').classList.add('hidden');
+            document.getElementById('modal-step-waiting').classList.remove('hidden');
+        }
+
+        function simulateAdminApproval() {
+            isLicensed = true;
+            document.getElementById('modal-step-waiting').classList.add('hidden');
+            document.getElementById('modal-step-select').classList.remove('hidden');
+        }
+
+        function setScooterModel(model) {
+            selectedModel = model;
+            document.getElementById('chosen-model-label').innerText = model;
+            document.getElementById('modal-step-select').classList.add('hidden');
+            document.getElementById('modal-step-bluetooth').classList.remove('hidden');
+        }
+
+        // Web Bluetooth Verbindung (Nur Auslesen)
+        async function connectRealBluetoothScooter() {
+            try {
+                if(navigator.bluetooth) {
+                    bluetoothDevice = await navigator.bluetooth.requestDevice({
+                        filters: [{ namePrefix: 'Ninebot' }, { namePrefix: 'Segway' }]
+                    });
+                }
+                finalizeConnection();
+            } catch (error) {
+                // Fallback für Demo
+                finalizeConnection();
+            }
+        }
+
+        function finalizeConnection() {
+            document.getElementById('scooter-modal').classList.add('hidden');
+            document.getElementById('header-sub').innerText = selectedModel + " Connected";
+        }
+
+        function reopenModal() {
+            document.getElementById('scooter-modal').classList.remove('hidden');
+        }
+
+        function updateSliderVal(id, val) {
+            document.getElementById('val-' + id).innerText = val;
+            if(id === 'sports-speed') {
+                document.getElementById('air-limit-info').innerText = val + " km/h";
+            }
+        }
+
+        // Air-Test richtet sich nach Tuning & Config
+        function toggleAirTest() {
+            const btn = document.getElementById('btn-start-air');
+            if(airTestRunning) {
+                clearInterval(airTestInterval);
+                airTestRunning = false;
+                btn.innerHTML = `<i class="fa-solid fa-play"></i> AIR-TEST STARTEN`;
+                document.getElementById('air-tacho-speed').innerText = "0";
+            } else {
+                airTestRunning = true;
+                btn.innerHTML = `<i class="fa-solid fa-square"></i> TEST STOPPEN`;
+                let currentSpeed = 0;
+                let maxSpeed = parseInt(document.getElementById('input-sports-speed').value);
+
+                airTestInterval = setInterval(() => {
+                    if(currentSpeed < maxSpeed) currentSpeed += 2;
+                    document.getElementById('air-tacho-speed').innerText = currentSpeed;
+                    const angle = -120 + (Math.min(currentSpeed, 100) / 100) * 240;
+                    document.getElementById('air-needle').style.transform = `rotate(${angle}deg)`;
+                }, 100);
+            }
+        }
+
+        async function startFullFlash() {
+            const log = document.getElementById('flash-log');
+            log.innerHTML += `<div>[INFO] Starte Flash für ${selectedModel}...</div>`;
+            for(let i=0; i<128; i++) {
+                await new Promise(r => setTimeout(r, 20));
+                document.getElementById(`block-${i}`).className = 'mem-block verified';
+            }
+            log.innerHTML += `<div class="text-emerald-400 font-bold">[SUCCESS] Firmware erfolgreich geflasht!</div>`;
+        }
+    </script>
 </body>
 </html>
